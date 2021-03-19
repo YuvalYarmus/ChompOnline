@@ -13,8 +13,9 @@ var server = http.createServer(app);
 var io = socketio(server);
 // Set static folder
 app.use(express_1.default.static(path.join(__dirname, 'public')));
+alert("about to handle get requests");
 // Handle GET requests
-app.get("/", function (req, res) {
+app.get("/" || "/index" || "/index.html", function (req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index2.html'));
 });
 app.get('/404', function (req, res, next) {
@@ -80,3 +81,5 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('500', { error: err });
 });
+var PORT = process.env.PORT || 3000;
+server.listen(PORT, function () { return console.log("Server running on port " + PORT); });

@@ -12,11 +12,12 @@ const io = socketio(server);
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+alert("about to handle get requests"); 
 
 // Handle GET requests
-app.get("/" ,(req:express.Request, res:express.Response) => {
+app.get("/" || "/index" || "/index.html" ,(req:express.Request, res:express.Response) => {
     res.sendFile(path.join(__dirname, 'public', 'index2.html')); 
-  }); 
+}); 
 
 
 
@@ -63,7 +64,7 @@ app.get('/public/*', function(req, res){
 
 app.use(function(req, res, next){
     res.status(404);
-
+    
     res.format({
         html: function () {
         res.render('404', { url: req.url })
@@ -97,3 +98,6 @@ app.use(function(err : any, req : express.Request, res : express.Response, next 
     res.render('500', { error: err });
 });
 
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

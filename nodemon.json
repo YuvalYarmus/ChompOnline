@@ -1,0 +1,15 @@
+{
+    "ignore": [
+        ".git",
+        "node_modules/**/node_modules"
+    ],
+    "watch": [
+        "src"
+    ],
+    "verbose": true,
+    "execMap": {
+        "rb": "ruby",
+        "pde": "processing --sketch={{pwd}} --run",
+        "ts": "npx ts-node {{filename}}"
+    }
+}
