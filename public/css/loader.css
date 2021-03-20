@@ -1,0 +1,93 @@
+:root {
+	--dark-color-a: #010102b6; /* #667aff */
+	--dark-color-b: #010102b6; /* #7386ff */
+	--light-color: #e6e9ff;
+	--success-color: #5cb85c;
+	--error-color: #d9534f;
+	--darkmode-color: #251f1f; /*#333 */
+}
+
+body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 16px;
+	background: var(--darkmode-color);
+	margin: 20px;
+}
+ 
+.btn {
+	cursor: pointer;
+	padding: 5px 15px;
+	/* background: var(--light-color); */
+    background: #e3e4e8;
+	color: var(--dark-color-a);
+	border: 0;
+	font-size: 17px;
+	border-radius: 12px;
+    margin-top: 5%;
+}
+
+.join-container {
+	max-width: 1000px;
+	margin: 80px auto;
+	color: #fff;
+}
+
+.join-header {
+	text-align: center;
+	padding: 20px;
+	background: var(--dark-color-a);
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+
+}
+
+.join-main {
+    
+    border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	padding: 30px 40px;
+	background: var(--dark-color-b);
+}
+
+.join-main p {
+	margin-bottom: 20px;
+}
+
+.join-main .form-control {
+	margin-bottom: 20px;
+}
+
+.join-main label {
+	display: block;
+	margin-bottom: 5px;
+} 
+
+.join-main input[type='text'] {
+	font-size: 16px;
+	padding: 5px;
+	height: 40px;
+	width: 100%;
+}
+
+.join-main select {
+	font-size: 24px;
+	padding: 5px;
+	height: 40px;
+	width: 100%;
+}
+
+.join-main .btn {
+	margin-top: 20px;
+	width: 100%;
+}
+
+@media (max-width: 1000px) {
+	.chat-main {
+		display: block;
+	}
+
+	.chat-sidebar {
+		display: none;
+	}
+} 
+

@@ -45,7 +45,7 @@ app.get(
 //   // res.sendFile(path.join("public", "index.html"));
 // });
 
-app.get("/404", function (req, res, next) {
+app.get("*/404", function (req, res, next) {
   // trigger a 404 since no other middleware
   // will match /404 after this one, and we're not
   // responding here
