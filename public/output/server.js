@@ -22,8 +22,15 @@ app.get(["/", "/index", "/index.html"], function (req, res) {
     res.sendFile("index.html", { root: path.join(__dirname, "../", "public") });
     // res.sendFile(path.join("public", "index.html"));
 });
+app.get(["/solo", "/solo.html"], function (req, res) {
+    res.sendFile("solo.html", {
+        root: path.join(__dirname, "../", "public"),
+    });
+});
 app.get(["/loadPage.html*", "/loadPage.html"], function (req, res) {
-    res.sendFile("loadPage.html", { root: path.join(__dirname, "../", "public") });
+    res.sendFile("loadPage.html", {
+        root: path.join(__dirname, "../", "public"),
+    });
     // res.sendFile(path.join("public", "index.html"));
 });
 // app.get("*/css/index.css", (req: express.Request, res: express.Response) => {
@@ -38,7 +45,9 @@ app.get("*/404", function (req, res, next) {
     // trigger a 404 since no other middleware
     // will match /404 after this one, and we're not
     // responding here
-    next();
+    res.status(404);
+    res.sendFile("404.html", { root: path.join(__dirname, "../", "public") });
+    // next();
 });
 app.get("/403", function (req, res, next) {
     // trigger a 403 error
@@ -57,7 +66,7 @@ app.get("*", function (req, res) {
 });
 app.get("/public/*", function (req, res) {
     res.status(404);
-    res.send("what???");
+    res.sendFile("404.html", { root: path.join(__dirname, "../", "public") });
 });
 var PORT = process.env.PORT || 3000;
 server.listen(PORT, function () { return console.log("Server running on port " + PORT); });

@@ -16,7 +16,7 @@ function getURLParam(paramName : string) {
     return params.get(paramName);
 }
 
-document.write("<h1 style=\"text-align: center\">" + getURLParam("hopping") + "</h1>");
+// document.write("<h1 style=\"text-align: center\">" + getURLParam("hopping") + "</h1>");
 setTimeout(redirect, 500);
 function redirect() {
     console.log("in redirect")
@@ -27,13 +27,17 @@ function redirect() {
         // node.appendChild(document.createElement("<h1>Missing a param. Please go back to the previous page.</h1>")); 
         let error_message:string = "<h1 style=\"text-align: center\">Missing a param. Please go back to the previous page.</h1>"; 
         if (document.querySelector("h1")) document.querySelector("h1")!.innerHTML = error_message; 
+        let curr_url : string = window.location.href; 
+        let list : string[] = curr_url.split("/")
+        let end_url : string = curr_url.substring(0, curr_url.length - list[list.length - 1].length) + "404"; 
+        window.location.replace(end_url);
     }
     else {
         console.log("in redirect else statement")
         let page : string = "./loadPage.html"; 
         var pages : string = getURLParam("hopping")!;
         if (pages.toString().toLowerCase() === "a") {
-            
+            window.location.replace("./solo.html")
         }
         else if (pages.toString().toLowerCase() === "b") {
             
@@ -45,14 +49,14 @@ function redirect() {
             window.location.replace(window.location.href + "/404")
         }
         let text : string = `
+        <main class="join-main">
         <form id="form" class="form" action="${page}">
             <input id="full_name" placeholder="Plese enter your name" name="full_name" required>
             <button type="submit" class="btn">Start the game!</button>
-        </form>
-        `;
+        </form></main>
+        `; 
         var node= document.getElementById("container2")!;
-        var child = node.appendChild(document.createElement('div')); 
-        child.innerHTML = text; 
+        node.innerHTML = text; 
     }
 }
 

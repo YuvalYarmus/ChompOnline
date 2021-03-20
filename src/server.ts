@@ -26,11 +26,21 @@ app.get(
   }
 );
 
+app.get(
+  ["/solo", "/solo.html"],
+  (req: express.Request, res: express.Response) => {
+    res.sendFile("solo.html", {
+      root: path.join(__dirname, "../", "public"),
+    });
+  }
+);
 
 app.get(
   ["/loadPage.html*", "/loadPage.html"],
   (req: express.Request, res: express.Response) => {
-    res.sendFile("loadPage.html", { root: path.join(__dirname, "../", "public") });
+    res.sendFile("loadPage.html", {
+      root: path.join(__dirname, "../", "public"),
+    });
     // res.sendFile(path.join("public", "index.html"));
   }
 );
@@ -49,7 +59,9 @@ app.get("*/404", function (req, res, next) {
   // trigger a 404 since no other middleware
   // will match /404 after this one, and we're not
   // responding here
-  next();
+  res.status(404);
+  res.sendFile("404.html", { root: path.join(__dirname, "../", "public") });
+  // next();
 });
 
 app.get("/403", function (req, res, next) {
@@ -72,7 +84,7 @@ app.get("*", function (req, res) {
 
 app.get("/public/*", function (req, res) {
   res.status(404);
-  res.send("what???");
+  res.sendFile("404.html", { root: path.join(__dirname, "../", "public") });
 });
 
 const PORT = process.env.PORT || 3000;

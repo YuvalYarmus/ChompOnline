@@ -13,7 +13,18 @@ body {
 	background: var(--darkmode-color);
 	margin: 20px;
 }
- 
+
+input {
+	padding: 5px 15px;
+    width: 100%;
+    background: #251f1f;
+	color: var(--dark-color-a);
+	font-size: 17px;
+	border-radius: 12px;
+    color: var(--light-color);
+    font-style: italic;
+}
+
 .btn {
 	cursor: pointer;
 	padding: 5px 15px;
@@ -26,25 +37,12 @@ body {
     margin-top: 5%;
 }
 
-.join-container {
-	max-width: 1000px;
-	margin: 80px auto;
-	color: #fff;
-}
-
-.join-header {
-	text-align: center;
-	padding: 20px;
-	background: var(--dark-color-a);
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
-
-}
 
 .join-main {
-    
     border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
+	border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
 	padding: 30px 40px;
 	background: var(--dark-color-b);
 }
