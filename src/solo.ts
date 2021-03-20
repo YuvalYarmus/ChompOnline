@@ -213,8 +213,8 @@ class Game {
     const dy = Math.round((height * 0.05) / (rows-1));
     // calculating xI - the first x position we can a shape at
     // and yI - the first y position we can a shape at
-    const xI = gapX + r, xE = gapX + (r + dx) * shapes_in_row - dx; 
-    const yI = gapY + r, yE = gapY + (r + dy) * rows - dy; 
+    const xI = gapX + r, xE = gapX + 2*r* shapes_in_row + dx * (shapes_in_row - 1); 
+    const yI = gapY + r, yE = gapY + 2*r* rows + dy * (rows - 1); 
 
     // logs
     console.log(`rows is [${rows}], shapes_in_row: [${shapes_in_row}]`);
@@ -233,8 +233,9 @@ canvas height: [${height}], canvas width: [${width}]`);
         if (curr_shape != null) {          
           let count_dx = (j) * dx > 0? (j) * dx : 0; 
           let count_dy = (i) * dy > 0? (i) * dy : 0; 
-          console.log(`countdx is [${count_dx}], countdy is [${count_dy}], i|j is [${i}|${j}]`);
-          const x = Math.round(xI + j*2*r + count_dx);
+          let fix_lean = (width-xE + r) < 0 || Math.abs(width - xE + r) / 4 + xE > width ? 0 : (width-xE) / 4; 
+          console.log(`fix_lean is ${fix_lean}, i|j is [${i}|${j}]`);
+          const x = Math.round(xI + j*2*r + count_dx + fix_lean);
           const y = Math.round(yI + i*2*r + count_dy);
           let shape = new Shape(x, y, r, i, j, curr_shape);
           shapes.push(shape);

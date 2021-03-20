@@ -150,8 +150,8 @@ var Game = /** @class */ (function () {
         var dy = Math.round((height * 0.05) / (rows - 1));
         // calculating xI - the first x position we can a shape at
         // and yI - the first y position we can a shape at
-        var xI = gapX + r, xE = gapX + (r + dx) * shapes_in_row - dx;
-        var yI = gapY + r, yE = gapY + (r + dy) * rows - dy;
+        var xI = gapX + r, xE = gapX + 2 * r * shapes_in_row + dx * (shapes_in_row - 1);
+        var yI = gapY + r, yE = gapY + 2 * r * rows + dy * (rows - 1);
         // logs
         console.log("rows is [" + rows + "], shapes_in_row: [" + shapes_in_row + "]");
         console.log("window height [" + window.innerHeight + "], window width: [" + window.innerWidth + "]\n\ncanvas height: [" + height + "], canvas width: [" + width + "]");
@@ -168,8 +168,9 @@ var Game = /** @class */ (function () {
                 if (curr_shape != null) {
                     var count_dx = (j) * dx > 0 ? (j) * dx : 0;
                     var count_dy = (i) * dy > 0 ? (i) * dy : 0;
-                    console.log("countdx is [" + count_dx + "], countdy is [" + count_dy + "], i|j is [" + i + "|" + j + "]");
-                    var x = Math.round(xI + j * 2 * r + count_dx);
+                    var fix_lean = (width - xE + r) < 0 || Math.abs(width - xE + r) / 4 + xE > width ? 0 : (width - xE) / 4;
+                    console.log("fix_lean is " + fix_lean + ", i|j is [" + i + "|" + j + "]");
+                    var x = Math.round(xI + j * 2 * r + count_dx + fix_lean);
                     var y = Math.round(yI + i * 2 * r + count_dy);
                     var shape = new Shape(x, y, r, i, j, curr_shape);
                     shapes.push(shape);
