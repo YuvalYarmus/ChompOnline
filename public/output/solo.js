@@ -22,14 +22,12 @@ var GameStateObject = /** @class */ (function () {
     }
     return GameStateObject;
 }());
-// import {fitShapesToCanvas2} from "./drawings";
 var Game = /** @class */ (function () {
     function Game() {
         var _this = this;
-        // rules to game_state array:
-        // all the inner arrays must be in the same length
+        // usability guidelines for the game_state array:
+        // on creation, all the inner arrays must be set to the same length
         // deleting a shape can be executed by changing its position to false and than redrawing
-        //var global_game_state = [[true, true, false, false],[true, true, false, false], [true, true, true, true], [true, false, true, true]]
         this.globalGameState = {
             array: [],
             shapes: [],
@@ -51,14 +49,21 @@ var Game = /** @class */ (function () {
         });
         window.addEventListener("load", function () { return _this.promptGameState(); });
     }
+    /**
+     * redrawing the board on every page resize
+     */
     Game.prototype.resizeFunc = function () {
         this.canvas.height = Math.round(window.innerHeight - window.innerHeight * 0.1 - 30);
         this.canvas.width = Math.round(window.innerWidth - window.innerWidth * 0.1 - 30);
         console.log("resize triggered. width: " + this.canvas.width + ", height: " + this.canvas.height + " ");
         // this.fitShapesToCanvas(this.canvas.height, this.canvas.width, this.globalGameState.array.length, this.globalGameState.array[0].length);
-        this.fitShapesToCanvas2(this.canvas, this.globalGameState);
+        this.fitShapesToCanvas(this.canvas, this.globalGameState);
         this.drawShapes(this.globalGameState.shapes);
     };
+    /**
+     * responds to user moves
+     * @param e - the mouse events the represent user moves
+     */
     Game.prototype.clickFunc = function (e) {
         var CANVASpos = this.getMousePos(e);
         for (var _i = 0, _a = this.globalGameState.shapes; _i < _a.length; _i++) {
@@ -89,9 +94,13 @@ var Game = /** @class */ (function () {
             }
         }
     };
+    /**
+     * prompting the user to set the board size
+     */
     Game.prototype.promptGameState = function () {
         var n = parseInt(prompt("Please enter the amount of rows you want (no more than 8)") || "8");
-        var m = parseInt(prompt("Please enter the amount of columns you want (no more than 8)") || "5");
+        var m = parseInt(prompt("Please enter the amount of columns you want (no more than 8)") ||
+            "5");
         console.log("n is " + n + " and m is " + m);
         if (isNaN(n) || n > 8)
             n = 8;
@@ -117,10 +126,7 @@ var Game = /** @class */ (function () {
     Game.prototype.updateGameStateShapes = function (gameStateShapes) {
         this.globalGameState.shapes = gameStateShapes;
     };
-    // fitShapesToCanvas2 = require('./drawings');
-    // imported up top
-    // fitShapesToCanvas2 = require('./drawings');
-    Game.prototype.fitShapesToCanvas2 = function (canvas, game_state) {
+    Game.prototype.fitShapesToCanvas = function (canvas, game_state) {
         // declaring constants
         var width = canvas.width, height = canvas.height;
         var rows = game_state.array.length, shapes_in_row = game_state.array[0].length;
@@ -168,87 +174,20 @@ var Game = /** @class */ (function () {
         this.updateGameStateShapes(shapes);
         return shapes;
     };
-    // fitShapesToCanvasFromMiddle(canvas: HTMLCanvasElement, game_state: GameState) {
-    //   // declaring constants
-    //   const width = canvas.width, height = canvas.height;
-    //   const rows = game_state.array.length, shapes_in_row = game_state.array[0].length;
-    //   // declaring an array that which include all the shapes in the end
-    //   let shapes = [];
-    //   const middle = {
-    //     x: Math.round(width / 2),
-    //     y: Math.round(height / 2),
-    //   }
-    //   // empty space gap
-    //   const perc = 10;
-    //   const gapX = Math.round(width * (perc / 100) / (shapes_in_row + 1)); // Math.round(r / (shapes_in_row + 1));
-    //   const gapY = Math.round(height * 0.1 / (rows + 1)); // Math.round(r / (rows + 1));
-    //   // calculating maximum bound radius
-    //   const r = Math.floor(width > height ? height * (1 - (perc + 5) / 100) / (rows > shapes_in_row ? (2 * rows) : (shapes_in_row * 2))
-    //     : width * (1 - (perc + 5) / 100) / (rows > shapes_in_row ? (2 * rows) : (shapes_in_row * 2)));
-    //   this.updateGameStateShapes(shapes);
-    //   return shapes;
-    // }
-    Game.prototype.fitShapesToCanvas = function (height, width, rows, shapes_in_row) {
-        var currGameState = this.globalGameState.array;
-        var shapes = [];
-        // for a game in which width is smaller than height
-        if (height > width) {
-            console.log("height mode\nwidth: " + width + ", height: " + height + "\n");
-            // we wish to leave 10% of the canvas for empty space padding
-            var xI = Math.round((width * 0.1) / (shapes_in_row + 1)), xF = Math.round(width - xI);
-            //const r = width * 0.9 / (2 * shapes_in_row);
-            var r = (width * 0.9) / (rows > shapes_in_row ? 2 * rows : shapes_in_row * 2);
-            var yI = Math.round((height * 0.1) / (rows + 1)), yF = Math.round(height - yI);
-            for (var i = currGameState.length - 1; i >= 0; i--) {
-                var curr_row = currGameState[i];
-                for (var j = 0; j < curr_row.length; j++) {
-                    var curr_shape = curr_row[j];
-                    if (curr_shape != null) {
-                        var x = Math.round(xI + r + j * (2 * r + xI));
-                        var y = Math.round(yI + r + i * (2 * r + yI));
-                        var shape = new Shape(x, y, r, i, j, curr_shape);
-                        shapes.push(shape);
-                    }
-                }
-            }
-        }
-        else {
-            console.log("width mode\nwidth: " + width + ", height: " + height + "\n");
-            // console.log(`curr game state is ${currGameState} len is ${currGameState.length}`)
-            //let xI = Math.round(width * 0.1 / (shapes_in_row + 1)), xF = Math.round(width - xI);
-            var r = (height * 0.9) / (rows > shapes_in_row ? 2 * rows : shapes_in_row * 2);
-            var xI = Math.round(this.canvas.width * 0.1 + r); // - (2* r * (shapes_in_row - 1) )
-            var yI = Math.round((height * 0.1) / (rows + 1)), yF = Math.round(height - yI);
-            for (var i = currGameState.length - 1; i >= 0; i--) {
-                var curr_row = currGameState[i];
-                // console.log(`curr row in i[${i}] is [${curr_row}]`)
-                for (var j = 0; j < curr_row.length; j++) {
-                    var curr_shape = curr_row[j];
-                    // console.log(`curr shape in i[${i}] j[${j}] is [${curr_row[j]}]`)
-                    if (curr_shape != null && curr_shape === true) {
-                        var x = Math.round(xI + r + j * (2 * r + (width * 0.1) / (shapes_in_row + 1)));
-                        var y = Math.round(yI + r + i * (2 * r + yI));
-                        var shape = new Shape(x, y, r, i, j, true);
-                        shapes.push(shape);
-                    }
-                }
-            }
-        }
-        this.updateGameStateShapes(shapes);
-        return shapes;
-    };
+    /**
+     * sets all values to true
+     * should only run once in the beginning of each game
+     * to change the shapes from true please use the updateShapesDrawStateByArray
+     * @param currGameState
+     */
     Game.prototype.createShapesByArray = function (currGameState) {
-        // this could should only run once in the beginning of each game
-        // it sets all values to true
-        // to change the shapes from true please use the updateShapesDrawStateByArray
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.canvas.height = Math.round(window.innerHeight - window.innerHeight * 0.1 - 30);
         this.canvas.width = Math.round(window.innerWidth - window.innerWidth * 0.1 - 30);
         var shapes = [];
         var rows = currGameState.length;
         var shapes_in_row = currGameState[currGameState.length - 1].length;
-        shapes = this.fitShapesToCanvas(this.canvas.height, this.canvas.width, rows, shapes_in_row);
-        shapes = this.fitShapesToCanvas2(this.canvas, this.globalGameState);
+        shapes = this.fitShapesToCanvas(this.canvas, this.globalGameState);
         this.drawShapes(shapes);
     };
     Game.prototype.updateShapesDrawStateByArray = function () {
@@ -272,7 +211,6 @@ var Game = /** @class */ (function () {
     Game.prototype.drawShapes = function (shapes) {
         if (shapes === void 0) { shapes = this.globalGameState.shapes; }
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // console.log(`shapes is ${shapes} \nin draw shapes\n`)
         for (var _i = 0, shapes_1 = shapes; _i < shapes_1.length; _i++) {
             var circle = shapes_1[_i];
             if (circle.shouldDraw === true) {
@@ -282,17 +220,13 @@ var Game = /** @class */ (function () {
                 this.ctx.fillStyle = this.color;
                 this.ctx.fill();
             }
-            // else console.log("there is a false draw")
         }
     };
     Game.prototype.updateGameState = function (currGameState, circle) {
         // all shapes above and to the right should be turned to false
-        // console.log(`\ncircle is: ${circle.id} with x: ${circle.x} and y: ${circle.y}\n`);
         for (var i = 0; i <= circle.i; i++) {
-            // console.log(`curr game state in row ${i} ${currGameState[i]}`)
             var curr_row = currGameState[i];
             for (var j = curr_row.length - 1; j >= circle.j; j--) {
-                // console.log(`curr game state in shape ${j} ${currGameState[i][j]}`)
                 curr_row[j] = false;
             }
         }
@@ -315,6 +249,5 @@ var Game = /** @class */ (function () {
     };
     return Game;
 }());
-console.clear();
+// console.clear();
 var game = new Game();
-// export {GameState as GameState, boolState as boolState, GameStateObject, Shape as Shape};

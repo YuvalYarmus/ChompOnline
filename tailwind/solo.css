@@ -8,3 +8,18 @@
     color:aliceblue; 
     text-align : center;     
 }
+
+canvas {
+    border: 2px solid black; 
+    display: inline;
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin:auto;
+}
+
+#canvasSpace {
+    text-align: center;  
+}
