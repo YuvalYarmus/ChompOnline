@@ -86,16 +86,23 @@ class Game {
    * redrawing the board on every page resize
    */
   resizeFunc() {
-    this.canvas.height = Math.round(
-      window.innerHeight - window.innerHeight * 0.1 - 30
-    );
-    this.canvas.width = Math.round(
-      window.innerWidth - window.innerWidth * 0.1 - 30
-    );
+    this.canvas.height = Math.round(window.innerHeight * 0.9);
     console.log(
-      `resize triggered. width: ${this.canvas.width}, height: ${this.canvas.height} `
+      `cavas height is ${this.canvas.height} and mod2 is ${
+        this.canvas.height % 2
+      }`
     );
-    // this.fitShapesToCanvas(this.canvas.height, this.canvas.width, this.globalGameState.array.length, this.globalGameState.array[0].length);
+    this.canvas.height -= this.canvas.height % 2;
+    this.canvas.width = Math.round(window.innerWidth * 0.9);
+    console.log(
+      `cavas height is ${this.canvas.width} and mod2 is ${
+        this.canvas.width % 2
+      }`
+    );
+    this.canvas.width -= this.canvas.width % 2;
+    console.log(
+      `resize triggered width:${this.canvas.width},height: ${this.canvas.height}`
+    );
     this.fitShapesToCanvas(this.canvas, this.globalGameState);
     this.drawShapes(this.globalGameState.shapes);
   }
@@ -184,15 +191,15 @@ class Game {
 
   fitShapesToCanvas(canvas: HTMLCanvasElement, game_state: GameState) {
     // declaring constants
-    const width = canvas.width,
-      height = canvas.height;
-    const rows = game_state.array.length,
-      shapes_in_row = game_state.array[0].length;
-    // declaring an array that which include all the shapes in the end
+    const width = canvas.width;
+    const height = canvas.height;
+    const rows = game_state.array.length;
+    const shapes_in_row = game_state.array[0].length;
+    // declaring an array which will eventually include all the shapes
     let shapes = [];
     // empty space gap
-    const gapX = Math.round((width * 0.1) / (shapes_in_row + 1)); // Math.round(r / (shapes_in_row + 1));
-    const gapY = Math.round((height * 0.1) / (rows + 1)); // Math.round(r / (rows + 1));
+    const gapX = Math.round((width * 0.1) / (shapes_in_row)); // Math.round(r / (shapes_in_row + 1));
+    const gapY = Math.round((height * 0.1) / (rows)); // Math.round(r / (rows + 1));
     // calculating maximum bound radius
     const r = Math.floor(
       width > height
@@ -253,13 +260,20 @@ class Game {
    */
   createShapesByArray(currGameState: boolState) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.canvas.height = Math.round(
-      window.innerHeight - window.innerHeight * 0.1 - 30
+    this.canvas.height = Math.round(window.innerHeight * 0.9);
+    console.log(
+      `cavas height is ${this.canvas.height} and mod2 is ${
+        this.canvas.height % 2
+      }`
     );
-
-    this.canvas.width = Math.round(
-      window.innerWidth - window.innerWidth * 0.1 - 30
+    this.canvas.height -= this.canvas.height % 2;
+    this.canvas.width = Math.round(window.innerWidth * 0.9);
+    console.log(
+      `cavas height is ${this.canvas.width} and mod2 is ${
+        this.canvas.width % 2
+      }`
     );
+    this.canvas.width -= this.canvas.width % 2;
 
     let shapes = [];
     var rows = currGameState.length;

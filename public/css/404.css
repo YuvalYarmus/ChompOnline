@@ -53,6 +53,9 @@
     
   }
   
+  html {
+    background-color: #010102b6;
+  }
   
   .main{
     min-height: 600px;
