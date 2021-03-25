@@ -40,7 +40,8 @@ function redirect() {
             window.location.replace("./solo.html")
         }
         else if (pages.toString().toLowerCase() === "b") {
-            
+            var url : URL = new URL(window.location.href);
+            page = "/multiplayer.html" + `${url.search}`;
         }
         else if (pages.toString().toLowerCase() === "c") {
             

@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc && echo 'yo' ",
     "main": "nodemon",
-    "css" : "postcss tailwind/solo.css -o public/css/solo.css"
+    "css" : "postcss tailwind/multiplayer.css -o public/css/multiplayer.css"
   },
   "repository": {
     "type": "git",

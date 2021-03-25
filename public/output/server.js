@@ -11,6 +11,7 @@ var socketio = require("socket.io");
 var app = express_1.default();
 var server = http.createServer(app);
 var io = socketio(server);
+var _a = require("uuid"), uuidV4 = _a.v4, uuidValidate = _a.validate;
 // Set static folder
 app.use(express_1.default.static(path.join(__dirname, "../", "public")));
 // var serveStatic = require("serve-static");
@@ -32,6 +33,22 @@ app.get(["/loadPage.html*", "/loadPage.html"], function (req, res) {
         root: path.join(__dirname, "../", "public"),
     });
     // res.sendFile(path.join("public", "index.html"));
+});
+app.get(["/multiplayer", "/multiplayer.html"], function (req, res) {
+    console.log("originalUrl:" + req.originalUrl); // should be like /multiplayer?name=d&hopping=a
+    var url = new URL(req.originalUrl);
+    console.log("search url:" + url.search); // should be like ?name=a&hopping=a
+    var redirect_url = req.path + ("/" + uuidV4()) + url.search;
+    res.redirect(redirect_url);
+});
+app.get(["/multiplayer/:roomID", "/multiplayer.html/:roomID"], function (req, res) {
+    if (uuidValidate(req.params.roomID)) {
+        res.sendFile("multiplayer.html", {
+            root: path.join(__dirname, "../", "public"),
+        });
+    }
+    else
+        res.redirect("/404");
 });
 // app.get("*/css/index.css", (req: express.Request, res: express.Response) => {
 //   res.sendFile("/css/index.html", { root: "./public" });

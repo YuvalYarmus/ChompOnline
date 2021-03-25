@@ -7,6 +7,7 @@ const socketio = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
+const {v4 : uuidV4, validate : uuidValidate} = require("uuid"); 
 
 // Set static folder
 app.use(express.static(path.join(__dirname, "../", "public")));
@@ -44,6 +45,23 @@ app.get(
     // res.sendFile(path.join("public", "index.html"));
   }
 );
+
+app.get(["/multiplayer", "/multiplayer.html"], (req: express.Request, res: express.Response) => {
+  console.log(`originalUrl:${req.originalUrl}`) // should be like /multiplayer?name=d&hopping=a
+  var url : URL = new URL(req.originalUrl);
+  console.log(`search url:${url.search}`); // should be like ?name=a&hopping=a
+  var redirect_url : string = req.path + `/${uuidV4()}` + url.search; 
+  res.redirect(redirect_url);
+})
+
+app.get(["/multiplayer/:roomID", "/multiplayer.html/:roomID"], (req: express.Request, res: express.Response) => {
+  if (uuidValidate(req.params.roomID)) {
+    res.sendFile("multiplayer.html", {
+      root: path.join(__dirname, "../", "public"),
+    });
+  }
+  else res.redirect("/404"); 
+})
 
 // app.get("*/css/index.css", (req: express.Request, res: express.Response) => {
 //   res.sendFile("/css/index.html", { root: "./public" });
