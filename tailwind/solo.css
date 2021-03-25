@@ -10,7 +10,7 @@
 }
 
 canvas {
-    border: 2px solid black; 
+    /* border: 2px solid black;  */
     display: inline;
     position: absolute;
     top:0;
