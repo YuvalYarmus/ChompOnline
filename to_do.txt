@@ -1,0 +1,19 @@
+create the basic socket io netowrk
+
+use peerjs to create a uniqe id to each client
+
+use uuid v4 to create rooms with uniqe id
+
+to handle it with express we will prob have to redirect to something like that:
+NormalUrl/multiplayer/uuidV4
+
+for the other user joining we can prompt a name request and than redirect to the same page
+with the extra search param. we will also add him in the second entry to users database with 
+the uniqe peerjs id and his name. param add example:
+
+var url = new URL("http://foo.bar/?x=1&y=2");
+// If your expected result is "http://foo.bar/?x=1&y=2&x=42"
+url.searchParams.append('x', 42);
+
+than we will start laying the surface to our chat and game, set certain emits
+and respond properly. emit message for chat and game for a move. 
