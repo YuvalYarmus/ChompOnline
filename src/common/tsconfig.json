@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "module": "CommonJS", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
+        "outDir": "../../out/common", /* Redirect output structure to the directory. */
+        "esModuleInterop": true,
+    },
+    "include": [
+        "**/*.ts"
+    ],
+}

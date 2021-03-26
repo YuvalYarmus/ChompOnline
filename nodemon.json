@@ -4,12 +4,14 @@
         "node_modules/**/node_modules"
     ],
     "watch": [
-        "src"
+        "./out/server"
     ],
     "verbose": true,
     "execMap": {
         "rb": "ruby",
         "pde": "processing --sketch={{pwd}} --run",
-        "ts": "npx ts-node {{filename}}"
+        "ts": "npx ts-node {{filename}}",
+        "js": "node {{filename}}"
     }
+    
 }

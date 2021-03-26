@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "es6", /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */
+    "module": "CommonJS", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
+    "outDir": "../../out/server", /* Redirect output structure to the directory. */
+    "moduleResolution": "node",
+    "types": ["node"],
+    "composite": true,
+    "declaration": true,
+    "esModuleInterop": true,
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "references": [{ "path": "../common" }]
+}
