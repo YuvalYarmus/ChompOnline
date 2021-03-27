@@ -50,7 +50,7 @@ app.get("*/index.scss", (req: express.Request, res: express.Response) =>{
   res.sendFile(path.join(__dirname, '../../css', 'index.scss'));
 });
 app.get(
-  ["/index.js", "/out/public/index.js", "/out/index.js"],
+  ["/index.js", "/out/public/index.js", "/out/index.js", "./index.js", "./out/public/index.js"],
   (req, res) => {
     if (log_get === true) console.log(`index.js req: ${req.url}`);
     res.sendFile("index.js", {
@@ -59,7 +59,7 @@ app.get(
   }
 );
 app.get(
-  ["/loader.js", "/public/output/loader.js", "/output/loader.js"],
+  ["/loader.js", "./out/public/loader.js", "/out/public/loader.js"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("loader.js req");
     res.sendFile("loader.js", {
@@ -68,7 +68,7 @@ app.get(
   }
 );
 app.get(
-  ["/loader2.js", "/public/output/loader2.js", "/output/loader2.js"],
+  ["/loader2.js", "./out/public/loader2.js", "/out/public/loader2.js"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("loader2.js req");
     res.sendFile("loader2.js", {
@@ -77,7 +77,7 @@ app.get(
   }
 );
 app.get(
-  ["/solo.js", "/public/output/solo.js", "/output/solo.js"],
+  ["/solo.js", "./out/public/solo.js", "/out/public/solo.js"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("solo.js req");
     res.sendFile("solo.js", {
@@ -86,7 +86,7 @@ app.get(
   }
 );
 app.get(
-  ["/three.min.js", "/public/output/three.min.js", "/output/three.min.js"],
+  ["/three.min.js", "/out/public/three.min.js", "../out/public/three.min.js"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("three.min.js req");
     res.sendFile("three.min.js", {
@@ -107,7 +107,7 @@ app.get(
   }
 );
 app.get(
-  ["*/loader.css", "/public/css/loader.css", "/css/loader.css"],
+  ["/loader.css", "/public/css/loader.css", "/css/loader.css"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("loader.css req");
     res.sendFile("loader.css", {
@@ -127,9 +127,10 @@ app.get(
 );
 app.get(
   [
+    "./multiplayer.js",
     "/multiplayer.js",
     "/out/public/multiplayer.js",
-    "/output/multiplayer.js",
+    "./out/public/multiplayer.js",
   ],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("multiplayer.js req");
@@ -139,7 +140,7 @@ app.get(
   }
 );
 app.get(
-  ["/multiplayer.css", "/public/css/multiplayer.css", "/css/multiplayer.css"],
+  ["/multiplayer.css", "/public/css/multiplayer.css", "/css/multiplayer.css", "./multiplayer.css"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("multiplayer.css req");
     res.sendFile("multiplayer.css", {
@@ -149,7 +150,7 @@ app.get(
 );
 
 app.get(
-  ["/solo", "/solo.html", "/public/solo.html"],
+  ["/solo", "/solo.html", "/public/solo.html", "./solo"],
   (req: express.Request, res: express.Response) => {
     res.sendFile("solo.html", {
       root: path.join(__dirname, "../../", "html"),
@@ -169,7 +170,7 @@ app.get(
 );
 
 app.get(
-  ["/multiplayer", "/multiplayer.html"],
+  ["/multiplayer", "/multiplayer.html", "./multiplayer"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) {
       console.log(`originalUrl:${req.originalUrl}`); // should be like /multiplayer?name=d&hopping=a
@@ -251,6 +252,9 @@ app.get("/public/*", function (req: any, res: any) {
 
 // Set static folder
 app.use(express.static(path.join(__dirname, "../../", "html")));
+app.use(express.static(path.join(__dirname, "../../", "out/public")));
+app.use(express.static(path.join(__dirname, "../../", "out/common")));
+app.use(express.static(path.join(__dirname, "../../", "out/public")));
 
 const PORT = process.env.PORT || 3000;
 
