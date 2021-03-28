@@ -17,3 +17,12 @@ url.searchParams.append('x', 42);
 
 than we will start laying the surface to our chat and game, set certain emits
 and respond properly. emit message for chat and game for a move. 
+
+
+
+
+missions:
+
+1. add an invite button to the chat]
+2. connect the page to the base
+3. start the game 
