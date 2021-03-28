@@ -23,11 +23,7 @@ interface GameState {
     shapes: Shape[];
     [key: string]: any;
 }
-declare class GameStateObject implements GameState {
-    array: boolState;
-    shapes: Shape[];
-}
-declare class Game {
+export default class Game {
     globalGameState: GameState;
     color: string;
     turns: number;
@@ -71,4 +67,4 @@ declare class Game {
         eveY: number;
     };
 }
-declare var game: Game;
+export {};

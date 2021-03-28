@@ -141,6 +141,11 @@
         "signature": "506b80b9951c9381dc5f11897b31fca5e2a65731d96ddefa19687fbc26b23c6e",
         "affectsGlobalScope": true
       },
+      "../../src/common/game.ts": {
+        "version": "9a4288051edbb40984ceed775e27fb5dd9adfea07cc1595637b7185e9348ed4b",
+        "signature": "2f3b6b9a1a42c80ede5810c927929131130c0648f166ece2136ce09d57974851",
+        "affectsGlobalScope": false
+      },
       "../../src/common/messages.ts": {
         "version": "ffe6fcd39c215ea8057c85685280af2af06390d4b8d7eabdd2fd34f0d6d710c0",
         "signature": "e5410d0fa164e68a62094d0c103341fe3f0958855782e5c140a86f773e390747",
@@ -1137,6 +1142,7 @@
       "../../node_modules/typescript/lib/lib.es2020.bigint.d.ts",
       "../../node_modules/typescript/lib/lib.es5.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.intl.d.ts",
+      "../../src/common/game.ts",
       "../../src/common/messages.ts"
     ]
   },

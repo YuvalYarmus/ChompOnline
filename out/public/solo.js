@@ -1,4 +1,3 @@
-"use strict";
 class Shape {
     constructor(x, y, radius, i, j, shouldDraw = true) {
         this.id = `${i}-${j}`;
@@ -19,7 +18,7 @@ class GameStateObject {
         this.shapes = [];
     }
 }
-class Game {
+export default class Game {
     constructor() {
         // usability guidelines for the game_state array:
         // on creation, all the inner arrays must be set to the same length
@@ -96,6 +95,7 @@ class Game {
      * prompting the user to set the board size
      */
     promptGameState() {
+        console.log(`in prompt`);
         let n = parseInt(prompt("Please enter the amount of rows you want (no more than 8)") || "8");
         let m = parseInt(prompt("Please enter the amount of columns you want (no more than 8)") ||
             "5");

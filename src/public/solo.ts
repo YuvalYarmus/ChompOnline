@@ -51,7 +51,7 @@ class GameStateObject implements GameState {
   array: boolState = [];
   shapes: Shape[] = [];
 }
-class Game {
+export default class Game {
   // usability guidelines for the game_state array:
   // on creation, all the inner arrays must be set to the same length
   // deleting a shape can be executed by changing its position to false and than redrawing
@@ -156,6 +156,7 @@ class Game {
    * prompting the user to set the board size
    */
   promptGameState() {
+    console.log(`in prompt`)
     let n: number = parseInt(
       prompt("Please enter the amount of rows you want (no more than 8)") || "8"
     );

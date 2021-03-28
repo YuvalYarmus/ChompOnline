@@ -1,6 +1,8 @@
 // import { createRequire } from 'module';
 // const require = createRequire(import.meta.url);
 // // can now use `require` in an ESM
+import Game from "./Game";
+var gotName = false;
 const socket = io();
 // const socket = require("socket.io")();
 const chatForm = document.getElementById("chat-form");
@@ -48,4 +50,54 @@ function outputMessage(message) {
     div.appendChild(para);
     document.querySelector(".chat-messages").appendChild(div);
 }
-export {};
+function execCopy() {
+    var input = document.createElement("input");
+    var copyText = document.location.href.split("?")[0] + "?invited=true";
+    input.value = copyText;
+    document.body.appendChild(input);
+    input.select();
+    input.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    document.body.removeChild(input);
+    var tooltip = document.getElementById("myTooltip");
+    tooltip.innerHTML = "Copied: " + copyText;
+}
+function hoverCopy() {
+    var tooltip = document.getElementById("myTooltip");
+    tooltip.innerHTML = "Copy to clipboard";
+}
+const copyBtn = document.getElementById("copyBtn");
+copyBtn?.addEventListener(`click`, () => {
+    execCopy();
+});
+copyBtn?.addEventListener(`mouseout`, () => {
+    hoverCopy();
+});
+function getURLParam(paramName) {
+    let params = new URLSearchParams(window.location.search);
+    console.log(window.location.search);
+    return params.get(paramName);
+}
+window.addEventListener(`load`, () => {
+    if (getURLParam("full_name") === null) {
+        let name = prompt(`please insert your name: `) || "John Doe";
+        var add = "";
+        if (document.location.search === "")
+            add = `?full_name=${name}`;
+        else if (getURLParam("invited"))
+            add = `&full_name=${name}`;
+        else
+            add = "/404";
+        window.location.href += add;
+    }
+    else
+        gotName = true;
+    console.log(`after load - gotName:${gotName}`);
+});
+if (getURLParam("full_name") != null) {
+    console.log(`before game`);
+    var game = new Game();
+}
+else {
+    console.log(`didnt go to gotName if:${gotName}`);
+}

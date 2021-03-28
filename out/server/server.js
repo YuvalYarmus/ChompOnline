@@ -31,20 +31,36 @@ io.on(`connection`, (WebSocket) => {
 // console.log("path is " + path.join(__dirname, "../../", "html"));
 // console.log("about to handle Requests");
 // Handle GET Requests
-app.get(["/", "/index", "/index.html", "/public/index.html"], (req, res) => {
+app.get("*/404", function (req, res, next) {
+    // trigger a 404 since no other middleware
+    // will match /404 after this one, and we're not
+    // responding here
+    if (log_get === true)
+        console.log("got 404");
+    res.status(404);
+    res.sendFile("404.html", { root: path.join(__dirname, "../../", "html") });
+    // next();
+});
+app.get(["/", "/index", "/index.html", "/public/index.html", "./index.html"], (req, res) => {
     if (log_get === true)
         console.log("initial get any"); // @ts-ignore
-    res.sendFile(path.join(__dirname, '../../html', 'index.html'));
+    res.sendFile(path.join(__dirname, "../../html", "index.html"));
     // res.sendFile("index.html", { root: path.join(__dirname, "../../", "html") });
     // res.sendFile(path.join("public", "index.html"));
 });
 app.get(["/index.css.map", "/css/index.css.map"], (req, res) => {
-    res.sendFile(path.join(__dirname, '../../css', 'index.css.map'));
+    res.sendFile(path.join(__dirname, "../../css", "index.css.map"));
 });
 app.get("*/index.scss", (req, res) => {
-    res.sendFile(path.join(__dirname, '../../css', 'index.scss'));
+    res.sendFile(path.join(__dirname, "../../css", "index.scss"));
 });
-app.get(["/index.js", "/out/public/index.js", "/out/index.js", "./index.js", "./out/public/index.js"], (req, res) => {
+app.get([
+    "/index.js",
+    "/out/public/index.js",
+    "/out/index.js",
+    "./index.js",
+    "./out/public/index.js",
+], (req, res) => {
     if (log_get === true)
         console.log(`index.js req: ${req.url}`);
     res.sendFile("index.js", {
@@ -65,7 +81,7 @@ app.get(["/loader2.js", "./out/public/loader2.js", "/out/public/loader2.js"], (r
         root: path.join(__dirname, "../../", "out/public"),
     });
 });
-app.get(["/solo.js", "./out/public/solo.js", "/out/public/solo.js"], (req, res) => {
+app.get(["/solo.js", "./out/public/solo.js", "/out/public/solo.js", "/out/public/solo"], (req, res) => {
     if (log_get === true)
         console.log("solo.js req");
     res.sendFile("solo.js", {
@@ -114,7 +130,12 @@ app.get([
         root: path.join(__dirname, "../../", "out/public"),
     });
 });
-app.get(["/multiplayer.css", "/public/css/multiplayer.css", "/css/multiplayer.css", "./multiplayer.css"], (req, res) => {
+app.get([
+    "/multiplayer.css",
+    "/public/css/multiplayer.css",
+    "/css/multiplayer.css",
+    "./multiplayer.css",
+], (req, res) => {
     if (log_get === true)
         console.log("multiplayer.css req");
     res.sendFile("multiplayer.css", {
@@ -154,6 +175,11 @@ function returnRedirectUrl(req, res) {
         console.log(`redirect_url:${redirect_url}`);
     return redirect_url;
 }
+app.get(["/out/public/Game", "./out/public/Game", "/out/public/Game.js"], (req, res) => {
+    res.sendFile("Game.js", {
+        root: path.join(__dirname, "../../", "out/public"),
+    });
+});
 app.get(["/multiplayer/:roomID", "/multiplayer.html/:roomID"], (req, res) => {
     if (uuidValidate(req.params.roomID)) {
         res.sendFile("multiplayer.html", {
@@ -162,14 +188,6 @@ app.get(["/multiplayer/:roomID", "/multiplayer.html/:roomID"], (req, res) => {
     }
     else
         res.redirect("/404");
-});
-app.get("*/404", function (req, res, next) {
-    // trigger a 404 since no other middleware
-    // will match /404 after this one, and we're not
-    // responding here
-    res.status(404);
-    res.sendFile("404.html", { root: path.join(__dirname, "../../", "html") });
-    // next();
 });
 app.get("/403", function (req, res, next) {
     // trigger a 403 error

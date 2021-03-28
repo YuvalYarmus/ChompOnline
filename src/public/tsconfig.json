@@ -13,9 +13,5 @@
   "include": [
     "**/*.ts"
   ],
-  "references": [
-    {
-      "path": "../common"
-    }
-  ]
+  "references": [{ "path": "../common" }]
 }

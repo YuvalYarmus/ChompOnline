@@ -10,18 +10,27 @@ const { v4: uuidV4, validate: uuidValidate } = require("uuid");
 import { msgObject, formatedMessage } from "../common/messages";
 var log_get = true;
 
-const bot_name = "Chomp Online Bot"
+const bot_name = "Chomp Online Bot";
 
 // socket io handles
 io.on(`connection`, (WebSocket: any) => {
   // console.log("new web socket connection");
-  const greet_user : formatedMessage = new formatedMessage(bot_name, "Welcome To Chomp Online!");
+  const greet_user: formatedMessage = new formatedMessage(
+    bot_name,
+    "Welcome To Chomp Online!"
+  );
   WebSocket.emit(`message`, greet_user);
-  const greet_user_join : formatedMessage = new formatedMessage(bot_name ,`A user has joined the room`);
+  const greet_user_join: formatedMessage = new formatedMessage(
+    bot_name,
+    `A user has joined the room`
+  );
   WebSocket.broadcast.emit(`message`, greet_user_join);
 
   WebSocket.on(`disconnect`, () => {
-    io.emit(`message`,  new formatedMessage(bot_name ,`A user has left the room`));
+    io.emit(
+      `message`,
+      new formatedMessage(bot_name, `A user has left the room`)
+    );
   });
 
   WebSocket.on(`ChatMessage`, (msg: string) => {
@@ -34,23 +43,43 @@ io.on(`connection`, (WebSocket: any) => {
 
 // Handle GET Requests
 app.get(
-  ["/", "/index", "/index.html", "/public/index.html"],
-  (req: express.Request, res: express.Response) => {
-    if (log_get === true) console.log("initial get any"); // @ts-ignore
-    res.sendFile(path.join(__dirname, '../../html', 'index.html'));
-    // res.sendFile("index.html", { root: path.join(__dirname, "../../", "html") });
-    // res.sendFile(path.join("public", "index.html"));
-    
+  "*/404",
+  function (req: express.Request, res: express.Response, next: any) {
+    // trigger a 404 since no other middleware
+    // will match /404 after this one, and we're not
+    // responding here
+    if (log_get === true) console.log("got 404");
+    res.status(404);
+    res.sendFile("404.html", { root: path.join(__dirname, "../../", "html") });
+    // next();
   }
 );
-app.get(["/index.css.map", "/css/index.css.map"], (req: express.Request, res: express.Response) =>{
-  res.sendFile(path.join(__dirname, '../../css', 'index.css.map'));
-});
-app.get("*/index.scss", (req: express.Request, res: express.Response) =>{
-  res.sendFile(path.join(__dirname, '../../css', 'index.scss'));
+app.get(
+  ["/", "/index", "/index.html", "/public/index.html", "./index.html"],
+  (req: express.Request, res: express.Response) => {
+    if (log_get === true) console.log("initial get any"); // @ts-ignore
+    res.sendFile(path.join(__dirname, "../../html", "index.html"));
+    // res.sendFile("index.html", { root: path.join(__dirname, "../../", "html") });
+    // res.sendFile(path.join("public", "index.html"));
+  }
+);
+app.get(
+  ["/index.css.map", "/css/index.css.map"],
+  (req: express.Request, res: express.Response) => {
+    res.sendFile(path.join(__dirname, "../../css", "index.css.map"));
+  }
+);
+app.get("*/index.scss", (req: express.Request, res: express.Response) => {
+  res.sendFile(path.join(__dirname, "../../css", "index.scss"));
 });
 app.get(
-  ["/index.js", "/out/public/index.js", "/out/index.js", "./index.js", "./out/public/index.js"],
+  [
+    "/index.js",
+    "/out/public/index.js",
+    "/out/index.js",
+    "./index.js",
+    "./out/public/index.js",
+  ],
   (req, res) => {
     if (log_get === true) console.log(`index.js req: ${req.url}`);
     res.sendFile("index.js", {
@@ -77,7 +106,7 @@ app.get(
   }
 );
 app.get(
-  ["/solo.js", "./out/public/solo.js", "/out/public/solo.js"],
+  ["/solo.js", "./out/public/solo.js", "/out/public/solo.js", "/out/public/solo"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("solo.js req");
     res.sendFile("solo.js", {
@@ -140,7 +169,12 @@ app.get(
   }
 );
 app.get(
-  ["/multiplayer.css", "/public/css/multiplayer.css", "/css/multiplayer.css", "./multiplayer.css"],
+  [
+    "/multiplayer.css",
+    "/public/css/multiplayer.css",
+    "/css/multiplayer.css",
+    "./multiplayer.css",
+  ],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("multiplayer.css req");
     res.sendFile("multiplayer.css", {
@@ -182,7 +216,7 @@ app.get(
   }
 );
 
-function returnRedirectUrl(req: any, res: any) {
+function returnRedirectUrl(req: express.Request, res: express.Response) {
   const params: string[] = req.originalUrl.toString().split("?");
   const paramString: string = "?" + params[params.length - 1];
   const redirect_url =
@@ -195,6 +229,15 @@ function returnRedirectUrl(req: any, res: any) {
 }
 
 app.get(
+  ["/out/public/Game", "./out/public/Game", "/out/public/Game.js"],
+  (req: express.Request, res: express.Response) => {
+    res.sendFile("Game.js", {
+      root: path.join(__dirname, "../../", "out/public"),
+    });
+  }
+);
+
+app.get(
   ["/multiplayer/:roomID", "/multiplayer.html/:roomID"],
   (req: express.Request, res: express.Response) => {
     if (uuidValidate(req.params.roomID)) {
@@ -205,17 +248,7 @@ app.get(
   }
 );
 
-app.get(
-  "*/404",
-  function (req: express.Request, res: express.Response, next: any) {
-    // trigger a 404 since no other middleware
-    // will match /404 after this one, and we're not
-    // responding here
-    res.status(404);
-    res.sendFile("404.html", { root: path.join(__dirname, "../../", "html") });
-    // next();
-  }
-);
+
 
 app.get(
   "/403",
@@ -237,7 +270,7 @@ app.get(
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get("*", function (req: express.Request, res: express.Response, next: any) {
-  console.log(`url:${req.url}`)
+  console.log(`url:${req.url}`);
   res.status(404);
   res.send("what???");
 });
