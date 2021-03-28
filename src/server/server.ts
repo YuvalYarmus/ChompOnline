@@ -136,7 +136,7 @@ app.get(
   }
 );
 app.get(
-  ["/loader.css", "/public/css/loader.css", "/css/loader.css"],
+  ["/loader.css", "/public/css/loader.css", "/css/loader.css", "./css/loader.css"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("loader.css req");
     res.sendFile("loader.css", {

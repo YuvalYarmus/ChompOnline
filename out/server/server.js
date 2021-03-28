@@ -104,7 +104,7 @@ app.get(["/index.css", "/public/css/index.css", "/css/index.css"], (req, res) =>
     // res.sendFile(path.join(__dirname, '../../css', 'index.scss'));
     // res.sendFile(path.join(__dirname, '../../css', 'index.css.map'));
 });
-app.get(["/loader.css", "/public/css/loader.css", "/css/loader.css"], (req, res) => {
+app.get(["/loader.css", "/public/css/loader.css", "/css/loader.css", "./css/loader.css"], (req, res) => {
     if (log_get === true)
         console.log("loader.css req");
     res.sendFile("loader.css", {
