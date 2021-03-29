@@ -142,12 +142,12 @@
         "affectsGlobalScope": true
       },
       "../../src/public/game.ts": {
-        "version": "f881c36deb9ee44648e57fcbd45161dedfa126fca345b4510a6918b43fba4588",
+        "version": "62cb0e1be5509f9a0a4d188692851196e6a04d54add17dc54c72d884121d3e2d",
         "signature": "2f3b6b9a1a42c80ede5810c927929131130c0648f166ece2136ce09d57974851",
         "affectsGlobalScope": false
       },
       "../../src/public/loader.ts": {
-        "version": "e5982da60f39ae3ac2524f5518c9cfb3e5b0182131346e0d54459aeb3fe14fde",
+        "version": "6683f6e65377872dc2a3810c80136a9af5a1073d414e35ea0375327eb90eb571",
         "signature": "f6e085d350e411e26867e6ea12d13fa19809726a558dc76bbf893b865fb93200",
         "affectsGlobalScope": true
       },
@@ -157,13 +157,13 @@
         "affectsGlobalScope": false
       },
       "../../src/public/multiplayer.ts": {
-        "version": "58a9dd9e810198d9d5e01f6fc19a2bef96700cb5ea4958767ccb575f35743c95",
+        "version": "62ae18a43b3110ee50564594a9cf1ef851af7416ca6f78cc5ac92d70a07a3ba6",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },
       "../../src/public/solo.ts": {
-        "version": "d2b9aa3f2c948ccc8869d5413345415ff86952299cfde99c92c5d3fbc5f612d3",
-        "signature": "2f3b6b9a1a42c80ede5810c927929131130c0648f166ece2136ce09d57974851",
+        "version": "c674af0ed17578be4646e1bebbc9f3500bc7ee5a91face165cfea0e2563fc4ae",
+        "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/node/globals.d.ts": {
@@ -406,6 +406,11 @@
         "signature": "ebddbd167c2fabd0151f50e5df94ca6d845149c47521280d8867afe3429dd078",
         "affectsGlobalScope": false
       },
+      "../../node_modules/@types/bson/index.d.ts": {
+        "version": "2d23edce1d4a3b33280970484e17ca87b03e2829d8677ae1501de18269f0498f",
+        "signature": "2d23edce1d4a3b33280970484e17ca87b03e2829d8677ae1501de18269f0498f",
+        "affectsGlobalScope": false
+      },
       "../../node_modules/@types/component-emitter/index.d.ts": {
         "version": "a3a88c1869ba1022dfaefac47ff7a984ec62510e9b4d60988f91d5e523266c34",
         "signature": "a3a88c1869ba1022dfaefac47ff7a984ec62510e9b4d60988f91d5e523266c34",
@@ -454,6 +459,16 @@
       "../../node_modules/@types/express/index.d.ts": {
         "version": "3b05c396564e51753e921e1cc4aae1cf7cd9be53c891cf2e81fa29f11c0bd373",
         "signature": "3b05c396564e51753e921e1cc4aae1cf7cd9be53c891cf2e81fa29f11c0bd373",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/mongodb/index.d.ts": {
+        "version": "6ff75ec3cfe71ea4f33c75508e5620eb166fa94571100ee1c35344c18993c216",
+        "signature": "6ff75ec3cfe71ea4f33c75508e5620eb166fa94571100ee1c35344c18993c216",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/mongoose/index.d.ts": {
+        "version": "f84843d41e84794bcba963d489bf2f9385836658bcccf73c501754be09327d7f",
+        "signature": "f84843d41e84794bcba963d489bf2f9385836658bcccf73c501754be09327d7f",
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/normalize-package-data/index.d.ts": {
@@ -506,6 +521,9 @@
         "../../node_modules/@types/node/http.d.ts",
         "../../node_modules/@types/node/index.d.ts"
       ],
+      "../../node_modules/@types/bson/index.d.ts": [
+        "../../node_modules/@types/node/index.d.ts"
+      ],
       "../../node_modules/@types/connect/index.d.ts": [
         "../../node_modules/@types/node/http.d.ts",
         "../../node_modules/@types/node/index.d.ts"
@@ -531,6 +549,20 @@
         "../../node_modules/@types/express-serve-static-core/index.d.ts",
         "../../node_modules/@types/qs/index.d.ts",
         "../../node_modules/@types/serve-static/index.d.ts"
+      ],
+      "../../node_modules/@types/mongodb/index.d.ts": [
+        "../../node_modules/@types/bson/index.d.ts",
+        "../../node_modules/@types/node/events.d.ts",
+        "../../node_modules/@types/node/index.d.ts",
+        "../../node_modules/@types/node/stream.d.ts",
+        "../../node_modules/@types/node/tls.d.ts"
+      ],
+      "../../node_modules/@types/mongoose/index.d.ts": [
+        "../../node_modules/@types/mongodb/index.d.ts",
+        "../../node_modules/@types/mongoose/index.d.ts",
+        "../../node_modules/@types/node/events.d.ts",
+        "../../node_modules/@types/node/index.d.ts",
+        "../../node_modules/@types/node/stream.d.ts"
       ],
       "../../node_modules/@types/node/assert.d.ts": [
         "../../node_modules/@types/node/assert.d.ts"
@@ -778,12 +810,18 @@
       "../../src/public/multiplayer.ts": [
         "../../src/public/game.ts",
         "../common/messages.d.ts"
+      ],
+      "../../src/public/solo.ts": [
+        "../../src/public/game.ts"
       ]
     },
     "exportedModulesMap": {
       "../../node_modules/@types/body-parser/index.d.ts": [
         "../../node_modules/@types/connect/index.d.ts",
         "../../node_modules/@types/node/http.d.ts",
+        "../../node_modules/@types/node/index.d.ts"
+      ],
+      "../../node_modules/@types/bson/index.d.ts": [
         "../../node_modules/@types/node/index.d.ts"
       ],
       "../../node_modules/@types/connect/index.d.ts": [
@@ -811,6 +849,20 @@
         "../../node_modules/@types/express-serve-static-core/index.d.ts",
         "../../node_modules/@types/qs/index.d.ts",
         "../../node_modules/@types/serve-static/index.d.ts"
+      ],
+      "../../node_modules/@types/mongodb/index.d.ts": [
+        "../../node_modules/@types/bson/index.d.ts",
+        "../../node_modules/@types/node/events.d.ts",
+        "../../node_modules/@types/node/index.d.ts",
+        "../../node_modules/@types/node/stream.d.ts",
+        "../../node_modules/@types/node/tls.d.ts"
+      ],
+      "../../node_modules/@types/mongoose/index.d.ts": [
+        "../../node_modules/@types/mongodb/index.d.ts",
+        "../../node_modules/@types/mongoose/index.d.ts",
+        "../../node_modules/@types/node/events.d.ts",
+        "../../node_modules/@types/node/index.d.ts",
+        "../../node_modules/@types/node/stream.d.ts"
       ],
       "../../node_modules/@types/node/assert.d.ts": [
         "../../node_modules/@types/node/assert.d.ts"
@@ -1058,6 +1110,7 @@
     },
     "semanticDiagnosticsPerFile": [
       "../../node_modules/@types/body-parser/index.d.ts",
+      "../../node_modules/@types/bson/index.d.ts",
       "../../node_modules/@types/component-emitter/index.d.ts",
       "../../node_modules/@types/connect/index.d.ts",
       "../../node_modules/@types/cookie/index.d.ts",
@@ -1066,6 +1119,8 @@
       "../../node_modules/@types/express-serve-static-core/index.d.ts",
       "../../node_modules/@types/express/index.d.ts",
       "../../node_modules/@types/mime/index.d.ts",
+      "../../node_modules/@types/mongodb/index.d.ts",
+      "../../node_modules/@types/mongoose/index.d.ts",
       "../../node_modules/@types/node/assert.d.ts",
       "../../node_modules/@types/node/async_hooks.d.ts",
       "../../node_modules/@types/node/base.d.ts",

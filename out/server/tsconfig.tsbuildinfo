@@ -366,6 +366,26 @@
         "signature": "9c4c395e927045b324877acdc4bfb95f128f36bc9f073266a2f0342495075a4f",
         "affectsGlobalScope": false
       },
+      "../../node_modules/@types/bson/index.d.ts": {
+        "version": "2d23edce1d4a3b33280970484e17ca87b03e2829d8677ae1501de18269f0498f",
+        "signature": "2d23edce1d4a3b33280970484e17ca87b03e2829d8677ae1501de18269f0498f",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/mongodb/index.d.ts": {
+        "version": "6ff75ec3cfe71ea4f33c75508e5620eb166fa94571100ee1c35344c18993c216",
+        "signature": "6ff75ec3cfe71ea4f33c75508e5620eb166fa94571100ee1c35344c18993c216",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/mongoose/index.d.ts": {
+        "version": "d77b64bbe4d289554ebd25de59ff2726df07d43dd560972c26bc4d551948166e",
+        "signature": "d77b64bbe4d289554ebd25de59ff2726df07d43dd560972c26bc4d551948166e",
+        "affectsGlobalScope": false
+      },
+      "../../src/server/schemas.ts": {
+        "version": "2776303f0139d3e6ef1bb1cd09357ad46c8dab4b2dcf8833871efc08dbdd3613",
+        "signature": "9c384d61626f0febb7a9556d12b199d9f95fd38976ed74732c37d7f4f4f9d918",
+        "affectsGlobalScope": false
+      },
       "../../node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
         "signature": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
@@ -412,7 +432,7 @@
         "affectsGlobalScope": false
       },
       "../../src/server/server.ts": {
-        "version": "0e15710bdba0ecf7a8aec0a66266d21e63f3201568e9d7484e6609aa3e7cb9a6",
+        "version": "bf4acc7e274c8a86ff41950a1210d863bd6e61fb2bb51188f8322ae440c33f69",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       }
@@ -443,6 +463,9 @@
         "../../node_modules/@types/node/http.d.ts",
         "../../node_modules/@types/node/index.d.ts"
       ],
+      "../../node_modules/@types/bson/index.d.ts": [
+        "../../node_modules/@types/node/index.d.ts"
+      ],
       "../../node_modules/@types/connect/index.d.ts": [
         "../../node_modules/@types/node/http.d.ts",
         "../../node_modules/@types/node/index.d.ts"
@@ -459,6 +482,13 @@
         "../../node_modules/@types/express-serve-static-core/index.d.ts",
         "../../node_modules/@types/qs/index.d.ts",
         "../../node_modules/@types/serve-static/index.d.ts"
+      ],
+      "../../node_modules/@types/mongodb/index.d.ts": [
+        "../../node_modules/@types/bson/index.d.ts",
+        "../../node_modules/@types/node/events.d.ts",
+        "../../node_modules/@types/node/index.d.ts",
+        "../../node_modules/@types/node/stream.d.ts",
+        "../../node_modules/@types/node/tls.d.ts"
       ],
       "../../node_modules/@types/node/assert.d.ts": [
         "../../node_modules/@types/node/assert.d.ts"
@@ -693,9 +723,21 @@
         "../../node_modules/@types/node/http.d.ts",
         "../../node_modules/@types/node/index.d.ts"
       ],
+      "../../node_modules/mongoose/index.d.ts": [
+        "../../node_modules/@types/mongodb/index.d.ts",
+        "../../node_modules/@types/node/events.d.ts",
+        "../../node_modules/@types/node/stream.d.ts",
+        "../../node_modules/mongoose/index.d.ts"
+      ],
+      "../../src/server/schemas.ts": [
+        "../../node_modules/mongoose/index.d.ts"
+      ],
       "../../src/server/server.ts": [
         "../../node_modules/@types/express/index.d.ts",
         "../../node_modules/@types/node/dns.d.ts",
+        "../../node_modules/@types/node/path.d.ts",
+        "../../node_modules/@types/qs/index.d.ts",
+        "../../src/server/schemas.ts",
         "../common/messages.d.ts"
       ]
     },
@@ -705,6 +747,9 @@
         "../../node_modules/@types/node/http.d.ts",
         "../../node_modules/@types/node/index.d.ts"
       ],
+      "../../node_modules/@types/bson/index.d.ts": [
+        "../../node_modules/@types/node/index.d.ts"
+      ],
       "../../node_modules/@types/connect/index.d.ts": [
         "../../node_modules/@types/node/http.d.ts",
         "../../node_modules/@types/node/index.d.ts"
@@ -721,6 +766,13 @@
         "../../node_modules/@types/express-serve-static-core/index.d.ts",
         "../../node_modules/@types/qs/index.d.ts",
         "../../node_modules/@types/serve-static/index.d.ts"
+      ],
+      "../../node_modules/@types/mongodb/index.d.ts": [
+        "../../node_modules/@types/bson/index.d.ts",
+        "../../node_modules/@types/node/events.d.ts",
+        "../../node_modules/@types/node/index.d.ts",
+        "../../node_modules/@types/node/stream.d.ts",
+        "../../node_modules/@types/node/tls.d.ts"
       ],
       "../../node_modules/@types/node/assert.d.ts": [
         "../../node_modules/@types/node/assert.d.ts"
@@ -954,14 +1006,22 @@
         "../../node_modules/@types/mime/index.d.ts",
         "../../node_modules/@types/node/http.d.ts",
         "../../node_modules/@types/node/index.d.ts"
+      ],
+      "../../node_modules/mongoose/index.d.ts": [
+        "../../node_modules/@types/mongodb/index.d.ts",
+        "../../node_modules/@types/node/events.d.ts",
+        "../../node_modules/@types/node/stream.d.ts",
+        "../../node_modules/mongoose/index.d.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
       "../../node_modules/@types/body-parser/index.d.ts",
+      "../../node_modules/@types/bson/index.d.ts",
       "../../node_modules/@types/connect/index.d.ts",
       "../../node_modules/@types/express-serve-static-core/index.d.ts",
       "../../node_modules/@types/express/index.d.ts",
       "../../node_modules/@types/mime/index.d.ts",
+      "../../node_modules/@types/mongodb/index.d.ts",
       "../../node_modules/@types/node/assert.d.ts",
       "../../node_modules/@types/node/async_hooks.d.ts",
       "../../node_modules/@types/node/base.d.ts",
@@ -1011,6 +1071,7 @@
       "../../node_modules/@types/qs/index.d.ts",
       "../../node_modules/@types/range-parser/index.d.ts",
       "../../node_modules/@types/serve-static/index.d.ts",
+      "../../node_modules/mongoose/index.d.ts",
       "../../node_modules/typescript/lib/lib.es2015.collection.d.ts",
       "../../node_modules/typescript/lib/lib.es2015.core.d.ts",
       "../../node_modules/typescript/lib/lib.es2015.d.ts",
@@ -1039,6 +1100,7 @@
       "../../node_modules/typescript/lib/lib.es5.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "../common/messages.d.ts",
+      "../../src/server/schemas.ts",
       "../../src/server/server.ts"
     ]
   },

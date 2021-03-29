@@ -95,7 +95,6 @@ export default class Game {
      * prompting the user to set the board size
      */
     promptGameState() {
-        console.log(`in prompt`);
         let n = parseInt(prompt("Please enter the amount of rows you want (no more than 8)") || "8");
         let m = parseInt(prompt("Please enter the amount of columns you want (no more than 8)") ||
             "5");

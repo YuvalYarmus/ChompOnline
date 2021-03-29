@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -12,21 +21,183 @@ const server = http.createServer(app);
 const io = socketio(server);
 const { v4: uuidV4, validate: uuidValidate } = require("uuid");
 const messages_1 = require("../common/messages");
-var log_get = true;
+const mongoose = require("mongoose");
+const uri = "mongodb+srv://YuvalYarmus:test123@cluster0.793qx.mongodb.net/Rooms?retryWrites=true&w=majority&authSource=admin";
+const settings = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    autoIndex: true,
+    keepAlive: true,
+    keepAliveInitialDelay: 300000,
+    poolSize: 10,
+};
+const Schemas_1 = require("./Schemas");
+// const { Room } = require("./Schemas");
+var log_get = false;
 const bot_name = "Chomp Online Bot";
+function connectToDB() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield mongoose.connect(uri, settings);
+        }
+        catch (error) {
+            console.log(`error in db connection:${error}`);
+        }
+    });
+}
+function addUserToRoom(socket_id, username, room) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const new_user = new Schemas_1.User({
+            user_id: socket_id,
+            name: username,
+            current_room: room,
+        });
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.Room.where({ uuid: room });
+            query.findOne(function (err, room) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (room === null)
+                        reject(`no such room found`);
+                    else {
+                        room.users.push(new_user);
+                        room.population += 1;
+                        try {
+                            const result = yield room.save();
+                            if (log_get)
+                                console.log(`saved room => result:\n${result}`);
+                            resolve(new_user);
+                        }
+                        catch (err) {
+                            reject(`update failed:${err}`);
+                        }
+                    }
+                });
+            });
+        });
+    });
+}
+function addUserToUsers(socket_id, username, room) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const new_user = new Schemas_1.User({
+            user_id: socket_id,
+            name: username,
+            current_room: room,
+        });
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield new_user.save();
+                resolve(new_user);
+            }
+            catch (err) {
+                reject(`error in adding the user to the users db:${err}`);
+            }
+        }));
+    });
+}
+function createRoom(uuid) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const room = new Schemas_1.Room({
+            population: 0,
+            uuid: uuid,
+            users: [],
+        });
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield room.save();
+                if (log_get)
+                    console.log(`managed to save the room to the databse:\n${result}`);
+                resolve(result);
+            }
+            catch (err) {
+                reject(`got an error in saving a room: ${err}`);
+            }
+        }));
+    });
+}
+function removeRoomUser(socket_id) {
+    return __awaiter(this, void 0, void 0, function* () {
+    });
+}
+function getRoomUsers(uuidRoom) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.Room.where({ uuid: uuidRoom });
+            query.findOne(function (err, room) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (room === null)
+                        reject(`no such room found`);
+                    else {
+                        var usersList = room.users;
+                        resolve(usersList);
+                    }
+                });
+            });
+        });
+    });
+}
+function removeCurrentUserFromUsers(socket_id) {
+    return __awaiter(this, void 0, void 0, function* () {
+    });
+}
+function getCurrentUserFromUsers(socket_id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.User.where({ "user_id": socket_id.toString() });
+            query.find(function (err, user) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (user === null)
+                        reject(`no such user found`);
+                    else {
+                        resolve(user);
+                    }
+                });
+            });
+        });
+    });
+}
+connectToDB();
+console.log(`should be connected to db`);
 // socket io handles
 io.on(`connection`, (WebSocket) => {
     // console.log("new web socket connection");
-    const greet_user = new messages_1.formatedMessage(bot_name, "Welcome To Chomp Online!");
-    WebSocket.emit(`message`, greet_user);
-    const greet_user_join = new messages_1.formatedMessage(bot_name, `A user has joined the room`);
-    WebSocket.broadcast.emit(`message`, greet_user_join);
-    WebSocket.on(`disconnect`, () => {
-        io.emit(`message`, new messages_1.formatedMessage(bot_name, `A user has left the room`));
-    });
-    WebSocket.on(`ChatMessage`, (msg) => {
-        io.emit(`message`, new messages_1.formatedMessage("take from db", msg));
-    });
+    WebSocket.on("joinRoom", (joinObject) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield addUserToRoom(WebSocket.id, joinObject.full_name, joinObject.room_uuid);
+        const copyUser = yield addUserToUsers(WebSocket.id, joinObject.full_name, joinObject.room_uuid);
+        WebSocket.join(joinObject.room_uuid);
+        const greet_user = new messages_1.formatedMessage(bot_name, `Welcome To Chomp Online ${copyUser.name}!`);
+        WebSocket.emit(`message`, greet_user);
+        const greet_user_join = new messages_1.formatedMessage(bot_name, `${copyUser.name} has joined the room`);
+        WebSocket.broadcast.to(joinObject.room_uuid).emit(`message`, greet_user_join);
+        WebSocket.emit(`outputRoom`, joinObject.room_uuid);
+        const users = yield getRoomUsers(joinObject.room_uuid);
+        io.to(joinObject.room_uuid).emit(`outputUsers`, users);
+    }));
+    WebSocket.on(`disconnect`, () => __awaiter(void 0, void 0, void 0, function* () {
+        const currentUser = yield getCurrentUserFromUsers(WebSocket.id);
+        var name = "A user";
+        if (currentUser === undefined)
+            console.log(`currentUser in disconnect is undefined`);
+        else if (currentUser === null)
+            console.log(`currentUser in disconnect is null`);
+        else if (currentUser != (null && undefined) && currentUser[0] === (null || undefined)) {
+            console.log(`currentUser in disconnect is not a list`);
+            name = currentUser.name;
+        }
+        else
+            name = currentUser[0].name;
+        io.emit(`message`, new messages_1.formatedMessage(bot_name, `${name} has left the room`));
+    }));
+    WebSocket.on(`ChatMessage`, (msg) => __awaiter(void 0, void 0, void 0, function* () {
+        const currentUser = yield getCurrentUserFromUsers(WebSocket.id);
+        // query returns a list so the result will be [user]. to grab the name use => currentUser[0].name
+        io.to(currentUser[0].current_room.toString()).emit(`ChatMessage`, new messages_1.formatedMessage(currentUser[0].name, msg));
+    }));
 });
 // console.log("path is " + path.join(__dirname, "../../", "html"));
 // console.log("about to handle Requests");
@@ -81,7 +252,12 @@ app.get(["/loader2.js", "./out/public/loader2.js", "/out/public/loader2.js"], (r
         root: path.join(__dirname, "../../", "out/public"),
     });
 });
-app.get(["/solo.js", "./out/public/solo.js", "/out/public/solo.js", "/out/public/solo"], (req, res) => {
+app.get([
+    "/solo.js",
+    "./out/public/solo.js",
+    "/out/public/solo.js",
+    "/out/public/solo",
+], (req, res) => {
     if (log_get === true)
         console.log("solo.js req");
     res.sendFile("solo.js", {
@@ -104,7 +280,12 @@ app.get(["/index.css", "/public/css/index.css", "/css/index.css"], (req, res) =>
     // res.sendFile(path.join(__dirname, '../../css', 'index.scss'));
     // res.sendFile(path.join(__dirname, '../../css', 'index.css.map'));
 });
-app.get(["/loader.css", "/public/css/loader.css", "/css/loader.css", "./css/loader.css"], (req, res) => {
+app.get([
+    "/loader.css",
+    "/public/css/loader.css",
+    "/css/loader.css",
+    "./css/loader.css",
+], (req, res) => {
     if (log_get === true)
         console.log("loader.css req");
     res.sendFile("loader.css", {
@@ -155,25 +336,35 @@ app.get(["/loadPage.html*", "/loadPage.html", "/public/loadPage.html"], (req, re
     });
     // res.sendFile(path.join("public", "index.html"));
 });
-app.get(["/multiplayer", "/multiplayer.html", "./multiplayer"], (req, res) => {
+app.get(["/multiplayer", "/multiplayer.html", "./multiplayer"], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (log_get === true) {
         console.log(`originalUrl:${req.originalUrl}`); // should be like /multiplayer?name=d&hopping=a
         console.log(`baseUrl:${req.baseUrl}`);
         console.log(`path:${req.path}`);
     }
     // var url : URL = new URL(req.originalUrl); // /multiplayer.html?full_name=Peres
-    res.redirect(returnRedirectUrl(req, res));
-});
+    yield res.redirect(yield returnRedirectUrl(req, res));
+}));
 function returnRedirectUrl(req, res) {
-    const params = req.originalUrl.toString().split("?");
-    const paramString = "?" + params[params.length - 1];
-    const redirect_url = `${req.protocol}://${req.get("host")}` +
-        req.path +
-        `/${uuidV4()}` +
-        `${paramString}`;
-    if (log_get === true)
-        console.log(`redirect_url:${redirect_url}`);
-    return redirect_url;
+    return __awaiter(this, void 0, void 0, function* () {
+        const params = req.originalUrl.toString().split("?");
+        const paramString = "?" + params[params.length - 1];
+        const uuid = uuidV4();
+        const redirect_url = `${req.protocol}://${req.get("host")}` +
+            req.path +
+            `/${uuid}` +
+            `${paramString}`;
+        if (log_get === true)
+            console.log(`redirect_url:${redirect_url}`);
+        try {
+            const room = yield createRoom(uuid);
+            return redirect_url;
+        }
+        catch (err) {
+            console.log(`error in returnRedirectUrl:${err}`);
+            return redirect_url;
+        }
+    });
 }
 app.get(["/out/public/Game", "./out/public/Game", "/out/public/Game.js"], (req, res) => {
     res.sendFile("Game.js", {
