@@ -42,8 +42,9 @@ function outputMessage(message) {
     p.classList.add("meta");
     if (message.msg === undefined || message.msg == null)
         alert(`message.msg is undefined or null:   ${message}`);
-    p.innerText = message.msg.username;
-    p.innerHTML += `<span>${message.msg.time}</span>`;
+    // p.innerText = message.msg.username;
+    // p.innerHTML += `<span>${message.msg.time}</span>`;
+    p.innerHTML = `<span>${message.msg.username}</span><span>${message.msg.time}</span>`;
     div.appendChild(p);
     const para = document.createElement("p");
     para.classList.add("text");
@@ -115,6 +116,10 @@ if (getURLParam("full_name") != null) {
     let room_uuid = path[path.length - 1];
     socket.emit('joinRoom', { room_uuid, full_name });
     var game = new Game();
+    document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
+        console.log(`\nrestarting game\n`);
+        game = new Game();
+    });
 }
 else {
     console.log(`didnt go to gotName if:${gotName}`);

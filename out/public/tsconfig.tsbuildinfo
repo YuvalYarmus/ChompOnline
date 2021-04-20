@@ -147,7 +147,7 @@
         "affectsGlobalScope": false
       },
       "../../src/public/loader.ts": {
-        "version": "6683f6e65377872dc2a3810c80136a9af5a1073d414e35ea0375327eb90eb571",
+        "version": "fb4f156246a061ffba334def00fafd326bfd66213630c0f4fdd991d26b3928e1",
         "signature": "f6e085d350e411e26867e6ea12d13fa19809726a558dc76bbf893b865fb93200",
         "affectsGlobalScope": true
       },
@@ -157,7 +157,7 @@
         "affectsGlobalScope": false
       },
       "../../src/public/multiplayer.ts": {
-        "version": "62ae18a43b3110ee50564594a9cf1ef851af7416ca6f78cc5ac92d70a07a3ba6",
+        "version": "1f88023c5953c0feb5958fdb0f4b6c813961db7c4f4888b4db110aefaf710988",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },

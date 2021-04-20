@@ -11,7 +11,7 @@
     "devCommon": "npx tsc -b .\\src\\common\\tsconfig.json",
     "main": "nodemon ./src/server/",
     "node2": "nodemon ./out/server/server.js",
-    "css": "postcss tailwind/multiplayer.css -o css/multiplayer.css"
+    "css": "postcss tailwind/index2.css -o css/index2.css"
   },
   "repository": {
     "type": "git",

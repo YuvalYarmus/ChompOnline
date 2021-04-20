@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.UserList = exports.Room = void 0;
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+exports.User = exports.Room = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
+const Schema = mongoose_1.default.Schema;
 const userSchema = new Schema({
     user_id: {
         type: String,
@@ -16,7 +19,7 @@ const userSchema = new Schema({
         type: String,
         required: false
     }
-}, { timestamps: true });
+}, { timestamps: true, autoIndex: true });
 const userListSchema = new Schema({
     user_list: {
         type: [userSchema],
@@ -39,9 +42,8 @@ const roomSchema = new Schema({
         default: []
     }
 }, { timestamps: true });
-exports.Room = mongoose.model("Room", roomSchema);
-exports.UserList = mongoose.model("UserList", userListSchema);
-exports.User = mongoose.model("User", userSchema);
+exports.Room = mongoose_1.default.model("Room", roomSchema);
+exports.User = mongoose_1.default.model("User", userSchema);
 // module.exports = {
 //     Room, UserList, User
 // };

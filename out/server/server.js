@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const path = require("path");
 const http = require("http");
 const socketio = require("socket.io");
@@ -21,8 +22,8 @@ const server = http.createServer(app);
 const io = socketio(server);
 const { v4: uuidV4, validate: uuidValidate } = require("uuid");
 const messages_1 = require("../common/messages");
-const mongoose = require("mongoose");
-const uri = "mongodb+srv://YuvalYarmus:test123@cluster0.793qx.mongodb.net/Rooms?retryWrites=true&w=majority&authSource=admin";
+// const mongoose = require("mongoose");
+const uri = "mongodb+srv://YuvalYarmus:test123@cluster0.793qx.mongodb.net/ChompOnline?retryWrites=true&w=majority&authSource=admin";
 const settings = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -38,13 +39,17 @@ const bot_name = "Chomp Online Bot";
 function connectToDB() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield mongoose.connect(uri, settings);
+            yield mongoose_1.default.connect(uri, settings);
+            console.log(`should be connected to db2`);
         }
         catch (error) {
+            console.log(`should NOT be connected to db`);
             console.log(`error in db connection:${error}`);
         }
     });
 }
+connectToDB();
+console.log(`should be connected to db`);
 function addUserToRoom(socket_id, username, room) {
     return __awaiter(this, void 0, void 0, function* () {
         const new_user = new Schemas_1.User({
@@ -118,6 +123,49 @@ function createRoom(uuid) {
 }
 function removeRoomUser(socket_id) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log(`in removeRoomUser`);
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            yield Schemas_1.Room.where({ "users.user_id": `${socket_id}` }).exec(function (err, rooms) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (!rooms)
+                        reject(`no such room found:${rooms}`);
+                    else {
+                        console.log(`\nrooms is: ${rooms} of type: ${typeof rooms}`);
+                        console.info(rooms);
+                        rooms.forEach((room, index) => __awaiter(this, void 0, void 0, function* () {
+                            if (room === (null || undefined))
+                                console.log(`one of the rooms was ${room}`);
+                            else {
+                                let userToRemove = null, index = -1;
+                                for (const [i, user] of room.users.entries()) {
+                                    if (user.user_id === socket_id) {
+                                        userToRemove = user;
+                                        index = i;
+                                    }
+                                }
+                                if (index !== -1) {
+                                    const removed = room.users.splice(index, 1);
+                                    room.population -= 1;
+                                    console.log(`the user which was removed: ${removed}`);
+                                    try {
+                                        yield room.save();
+                                        resolve(removed[0]);
+                                    }
+                                    catch (err) {
+                                        console.log(`\nfailed to save room:${room}\nError:${err}`);
+                                        reject(err);
+                                    }
+                                }
+                                else
+                                    console.log(`\nthe user wasn't in the room!!!!`);
+                            }
+                        }));
+                    }
+                });
+            });
+        }));
     });
 }
 function getRoomUsers(uuidRoom) {
@@ -141,6 +189,20 @@ function getRoomUsers(uuidRoom) {
 }
 function removeCurrentUserFromUsers(socket_id) {
     return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            const query = Schemas_1.User.where({ "user_id": socket_id.toString() });
+            yield query.findOneAndDelete((err, user) => {
+                console.log(`\nin removeCurrentUserFromUsers:`);
+                console.log(`query is:${query}`);
+                console.log(`user is:${user}\n\n`);
+                if (err)
+                    reject(`got an error in removeFromUsers:${err}\n`);
+                else if (user === null)
+                    resolve(null);
+                else
+                    resolve(user);
+            });
+        }));
     });
 }
 function getCurrentUserFromUsers(socket_id) {
@@ -161,8 +223,28 @@ function getCurrentUserFromUsers(socket_id) {
         });
     });
 }
-connectToDB();
-console.log(`should be connected to db`);
+function handleEmptyRoom(uuidRoom) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const query = Schemas_1.Room.where({ uuid: uuidRoom });
+        query.findOne((err, room) => {
+            if (err)
+                console.log(`handleEmptyRoom: got an error in querying ${err}`);
+            else if (room === null)
+                console.log(`handleEmptyRoom: no such room found`);
+            else if (room.users.length === 0 || room.users[0] === (null || undefined)) {
+                Schemas_1.Room.where({ uuid: uuidRoom }).findOneAndDelete((err, room) => {
+                    if (err)
+                        console.log(`handleEmptyRoom2: got an error in querying ${err}`);
+                    else if (room === null)
+                        console.log(`handleEmptyRoom2: no such room found`);
+                    else {
+                        console.log(`room deleted:${room}`);
+                    }
+                });
+            }
+        });
+    });
+}
 // socket io handles
 io.on(`connection`, (WebSocket) => {
     // console.log("new web socket connection");
@@ -179,18 +261,14 @@ io.on(`connection`, (WebSocket) => {
         io.to(joinObject.room_uuid).emit(`outputUsers`, users);
     }));
     WebSocket.on(`disconnect`, () => __awaiter(void 0, void 0, void 0, function* () {
-        const currentUser = yield getCurrentUserFromUsers(WebSocket.id);
+        const currentUser = yield removeCurrentUserFromUsers(WebSocket.id);
+        const currentUser2 = yield removeRoomUser(WebSocket.id);
         var name = "A user";
-        if (currentUser === undefined)
-            console.log(`currentUser in disconnect is undefined`);
-        else if (currentUser === null)
-            console.log(`currentUser in disconnect is null`);
-        else if (currentUser != (null && undefined) && currentUser[0] === (null || undefined)) {
-            console.log(`currentUser in disconnect is not a list`);
-            name = currentUser.name;
-        }
-        else
-            name = currentUser[0].name;
+        if (currentUser2 != null)
+            name = currentUser2.name;
+        if (currentUser2 != null)
+            handleEmptyRoom(currentUser2.current_room);
+        io.to(currentUser2.current_room).emit(`outputUsers`, yield getRoomUsers(currentUser2.current_room));
         io.emit(`message`, new messages_1.formatedMessage(bot_name, `${name} has left the room`));
     }));
     WebSocket.on(`ChatMessage`, (msg) => __awaiter(void 0, void 0, void 0, function* () {
@@ -280,6 +358,12 @@ app.get(["/index.css", "/public/css/index.css", "/css/index.css"], (req, res) =>
     // res.sendFile(path.join(__dirname, '../../css', 'index.scss'));
     // res.sendFile(path.join(__dirname, '../../css', 'index.css.map'));
 });
+app.get(["/index2.css", "/public/css/index2.css", "/css/index2.css"], (req, res) => {
+    console.log("index2.css req");
+    res.sendFile("index2.css", {
+        root: path.join(__dirname, "../../css"),
+    });
+});
 app.get([
     "/loader.css",
     "/public/css/loader.css",
@@ -336,14 +420,15 @@ app.get(["/loadPage.html*", "/loadPage.html", "/public/loadPage.html"], (req, re
     });
     // res.sendFile(path.join("public", "index.html"));
 });
-app.get(["/multiplayer", "/multiplayer.html", "./multiplayer"], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get(["/multiplayer", "/multiplayer.html", "./multiplayer", "/html/multiplayer.html"], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (log_get === true) {
         console.log(`originalUrl:${req.originalUrl}`); // should be like /multiplayer?name=d&hopping=a
         console.log(`baseUrl:${req.baseUrl}`);
         console.log(`path:${req.path}`);
     }
     // var url : URL = new URL(req.originalUrl); // /multiplayer.html?full_name=Peres
-    yield res.redirect(yield returnRedirectUrl(req, res));
+    const url = yield returnRedirectUrl(req, res);
+    res.redirect(url);
 }));
 function returnRedirectUrl(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -371,7 +456,7 @@ app.get(["/out/public/Game", "./out/public/Game", "/out/public/Game.js"], (req, 
         root: path.join(__dirname, "../../", "out/public"),
     });
 });
-app.get(["/multiplayer/:roomID", "/multiplayer.html/:roomID"], (req, res) => {
+app.get(["/multiplayer/:roomID", "/multiplayer.html/:roomID", "/html/multiplayer.html/:roomID"], (req, res) => {
     if (uuidValidate(req.params.roomID)) {
         res.sendFile("multiplayer.html", {
             root: path.join(__dirname, "../../", "html"),
@@ -392,7 +477,7 @@ app.get("/500", function (req, res, next) {
 });
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get("*", function (req, res, next) {
-    console.log(`url:${req.url}`);
+    console.log(`in 404, url is:${req.url}`);
     res.status(404);
     res.send("what???");
 });

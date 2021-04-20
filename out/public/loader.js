@@ -40,7 +40,8 @@ function redirect() {
         }
         else if (pages.toString().toLowerCase() === "b") {
             var url = new URL(window.location.href);
-            page = "/html/multiplayer.html" + `${url.search}`;
+            // page = "/html/multiplayer.html" + `${url.search}`;
+            page = "../../html/multiplayer.html";
         }
         else if (pages.toString().toLowerCase() === "c") {
         }

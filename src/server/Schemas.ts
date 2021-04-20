@@ -1,7 +1,11 @@
-import { Mongoose } from "mongoose";
-
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+
+export interface UserDoc extends mongoose.Document {
+    user_id : string;
+    name : string;
+    current_room : string; 
+}
 
 const userSchema = new Schema({
     user_id: {
@@ -16,7 +20,7 @@ const userSchema = new Schema({
         type: String,
         required: false
     }
-}, { timestamps: true });
+}, { timestamps: true, autoIndex : true });
 
 const userListSchema = new Schema({
     user_list: {
@@ -25,6 +29,12 @@ const userListSchema = new Schema({
         default: []
     }
 });
+
+export interface RoomDoc extends mongoose.Document {
+    population: number;
+    uuid: string;
+    users: [UserDoc];
+}
 
 const roomSchema = new Schema({
     population: {
@@ -43,9 +53,8 @@ const roomSchema = new Schema({
 }, { timestamps: true });
 
 
-export const Room = mongoose.model("Room", roomSchema);
-export const UserList = mongoose.model("UserList", userListSchema);
-export const User = mongoose.model("User", userSchema);
+export const Room = mongoose.model<RoomDoc>("Room", roomSchema);
+export const User = mongoose.model<UserDoc>("User", userSchema);
 
 // module.exports = {
 //     Room, UserList, User
