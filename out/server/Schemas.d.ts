@@ -7,6 +7,7 @@ export interface UserDoc extends mongoose.Document {
 export interface RoomDoc extends mongoose.Document {
     population: number;
     uuid: string;
+    gameState: string;
     users: [UserDoc];
 }
 export declare const Room: mongoose.Model<RoomDoc, {}>;

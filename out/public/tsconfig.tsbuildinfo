@@ -142,12 +142,12 @@
         "affectsGlobalScope": true
       },
       "../../src/public/game.ts": {
-        "version": "62cb0e1be5509f9a0a4d188692851196e6a04d54add17dc54c72d884121d3e2d",
-        "signature": "2f3b6b9a1a42c80ede5810c927929131130c0648f166ece2136ce09d57974851",
+        "version": "d5abbf519f87d08f2803a4d723a1c7bc7429e73c7a363229e20b4e8e152e98dc",
+        "signature": "ef6b99a0b534ccbeb1a9b9a493b42f6f53382923b3f77c96f3357946a2ecbbe8",
         "affectsGlobalScope": false
       },
       "../../src/public/loader.ts": {
-        "version": "fb4f156246a061ffba334def00fafd326bfd66213630c0f4fdd991d26b3928e1",
+        "version": "dfd584a7e41172f01b807ce4f0741fdb8ef4d4b6100cb73ddf29d4713990337b",
         "signature": "f6e085d350e411e26867e6ea12d13fa19809726a558dc76bbf893b865fb93200",
         "affectsGlobalScope": true
       },
@@ -157,7 +157,7 @@
         "affectsGlobalScope": false
       },
       "../../src/public/multiplayer.ts": {
-        "version": "1f88023c5953c0feb5958fdb0f4b6c813961db7c4f4888b4db110aefaf710988",
+        "version": "002b40fd6518b0a4e79abc9b293b5522129245b1ef90ef3a4f91b71c61b89887",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },

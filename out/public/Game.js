@@ -19,7 +19,7 @@ class GameStateObject {
     }
 }
 export default class Game {
-    constructor() {
+    constructor(n = -1, m = -1) {
         // usability guidelines for the game_state array:
         // on creation, all the inner arrays must be set to the same length
         // deleting a shape can be executed by changing its position to false and than redrawing
@@ -42,7 +42,12 @@ export default class Game {
         this.canvas.addEventListener("click", (e) => {
             this.clickFunc(e);
         });
-        window.addEventListener("load", () => this.promptGameState());
+        if (n === -1 || m === -1)
+            window.addEventListener("load", () => this.promptGameState());
+        else {
+            this.resetGameStateArray(n, m);
+            this.createShapesByArray(this.globalGameState.array);
+        }
     }
     /**
      * redrawing the board on every page resize
@@ -119,6 +124,26 @@ export default class Game {
     }
     updateGameStateArray(gameStateArray) {
         this.globalGameState.array = gameStateArray;
+    }
+    resetGameStateArray(n = -1, m = -1) {
+        if ((n === -1 || m === -1) && this.globalGameState.array) {
+            for (let index = 0; index < this.globalGameState.array.length; index++) {
+                let element = this.globalGameState.array[index];
+                for (let index = 0; index < element.length; index++) {
+                    element[index] = true;
+                }
+            }
+        }
+        else {
+            let arr = [];
+            for (let i = 0; i < n; i++) {
+                arr.push([]);
+                for (let j = 0; j < m; j++) {
+                    arr[i].push(true);
+                }
+            }
+            this.updateGameStateArray(arr);
+        }
     }
     updateGameStateShapes(gameStateShapes) {
         this.globalGameState.shapes = gameStateShapes;

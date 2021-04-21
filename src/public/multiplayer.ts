@@ -78,7 +78,8 @@ function outputUsers(users : []) {
 
 function execCopy() {
   var input = document.createElement("input") as HTMLInputElement;
-  var copyText = document.location.href.split("?")[0] + "?invited=true";
+  var copyText = document.location.href.split("?")[0] +
+  `?invited=true&n=${getURLParam("n")}&m=${getURLParam("m")}`;
   input.value = copyText;
   document.body.appendChild(input);
   input.select();
@@ -121,16 +122,17 @@ window.addEventListener(`load`, () => {
 });
 
 if (getURLParam("full_name") != null) {
-  const { full_name } = Qs.parse(location.search, {
+  const { full_name, n , m } = Qs.parse(location.search, {
     ignoreQueryPrefix: true,
   });
+  console.log(`full_name is ${full_name}, n is ${n}, m is ${m}`);
   let path : string[] = document.location.pathname.split("/");
   let room_uuid : string = path[path.length - 1];
   socket.emit('joinRoom', { room_uuid, full_name });
-  var game = new Game();
+  var game = new Game(n, m);
   document.getElementById(`playAgainBtn`)?.addEventListener("click", () =>  {
     console.log(`\nrestarting game\n`);
-    game = new Game();
+    game = new Game(n, m);
   });
 } else {
   console.log(`didnt go to gotName if:${gotName}`);

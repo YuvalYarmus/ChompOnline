@@ -19,10 +19,22 @@ than we will start laying the surface to our chat and game, set certain emits
 and respond properly. emit message for chat and game for a move. 
 
 
-
-
 missions:
 
 1. add an invite button to the chat]
 2. connect the page to the base
 3. start the game 
+
+-------------------------------------------------------------------------------------------
+
+online problems to deal with:
+
+1. Make the game borders of each room a constant - will be decided on by the one creating the room
+in the loading page
+
+NOW ON : 2. Add a game state string to the room type
+
+3. handle the game over - should reset the game state string of the room, add a winnder pop up,
+restart the game?
+
+4. Make sure only the first 2 who enter can play, the rest may only watch and chat

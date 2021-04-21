@@ -36,6 +36,10 @@ const roomSchema = new Schema({
         type: String,
         require: true
     },
+    gameState: {
+        type: String,
+        require: true
+    },
     users: {
         type: [userSchema],
         required: false,

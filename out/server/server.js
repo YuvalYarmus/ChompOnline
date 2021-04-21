@@ -205,6 +205,10 @@ function removeCurrentUserFromUsers(socket_id) {
         }));
     });
 }
+function getFirstRoomUser(socket_id) {
+    return __awaiter(this, void 0, void 0, function* () {
+    });
+}
 function getCurrentUserFromUsers(socket_id) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {

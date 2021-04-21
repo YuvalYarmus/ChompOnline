@@ -33,6 +33,7 @@ const userListSchema = new Schema({
 export interface RoomDoc extends mongoose.Document {
     population: number;
     uuid: string;
+    gameState: string;
     users: [UserDoc];
 }
 
@@ -42,6 +43,10 @@ const roomSchema = new Schema({
         required: true
     },
     uuid: {
+        type: String,
+        require: true
+    },
+    gameState : {
         type: String,
         require: true
     },

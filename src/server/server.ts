@@ -80,7 +80,7 @@ async function addUserToUsers(socket_id: any, username: string, room: string) {
   });
 }
 
-async function createRoom(uuid: string) {
+async function createRoom(uuid: string, ) {
   const room = new Room({
     population: 0,
     uuid: uuid,
@@ -159,6 +159,11 @@ async function removeCurrentUserFromUsers(socket_id:any) {
     });
   });
 }
+
+async function getFirstRoomUser(socket_id : any) {
+
+}
+
 async function getCurrentUserFromUsers(socket_id: any) {
   return new Promise((resolve, reject) => {
     const query = User.where({ "user_id": socket_id.toString() });
