@@ -134,7 +134,7 @@ if (getURLParam("full_name") != null) {
   document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
     console.log(`\nrestarting game\n`);
     game = new Game(n, m);
-    document.getElementById("Holder2")!.setAttribute("x-data", "{ open: true }");
+    document.getElementById("Holder2")!.setAttribute("x-data", "{ open: false }");
   });
 } else {
   console.log(`didnt go to gotName if:${gotName}`);
