@@ -25,10 +25,10 @@ socket.on(`ChatMessage`, (message: formatedMessage) => {
 });
 
 // Get room and users
-socket.on('outputRoom', (room : string ) => {
+socket.on("outputRoom", (room: string) => {
   outputRoomName(room);
 });
-socket.on('outputUsers', (users : [] ) => {
+socket.on("outputUsers", (users: []) => {
   outputUsers(users);
 });
 
@@ -52,7 +52,7 @@ function outputMessage(message: formatedMessage) {
     alert(`message.msg is undefined or null:   ${message}`);
   // p.innerText = message.msg.username;
   // p.innerHTML += `<span>${message.msg.time}</span>`;
-  p.innerHTML = `<span>${message.msg.username}</span><span>${message.msg.time}</span>`
+  p.innerHTML = `<span>${message.msg.username}</span><span>${message.msg.time}</span>`;
   div.appendChild(p);
   const para = document.createElement("p");
   para.classList.add("text");
@@ -62,15 +62,15 @@ function outputMessage(message: formatedMessage) {
 }
 
 // Add room name to DOM
-function outputRoomName(room : string) {
+function outputRoomName(room: string) {
   roomName.innerText = room;
 }
 
 // Add users to DOM
-function outputUsers(users : []) {
-  userList.innerHTML = '';
-  users.forEach( (user : any)=>{
-    const li = document.createElement('li');
+function outputUsers(users: []) {
+  userList.innerHTML = "";
+  users.forEach((user: any) => {
+    const li = document.createElement("li");
     li.innerText = user.name;
     userList.appendChild(li);
   });
@@ -78,8 +78,9 @@ function outputUsers(users : []) {
 
 function execCopy() {
   var input = document.createElement("input") as HTMLInputElement;
-  var copyText = document.location.href.split("?")[0] +
-  `?invited=true&n=${getURLParam("n")}&m=${getURLParam("m")}`;
+  var copyText =
+    document.location.href.split("?")[0] +
+    `?invited=true&n=${getURLParam("n")}&m=${getURLParam("m")}`;
   input.value = copyText;
   document.body.appendChild(input);
   input.select();
@@ -122,17 +123,18 @@ window.addEventListener(`load`, () => {
 });
 
 if (getURLParam("full_name") != null) {
-  const { full_name, n , m } = Qs.parse(location.search, {
+  const { full_name, n, m } = Qs.parse(location.search, {
     ignoreQueryPrefix: true,
   });
   console.log(`full_name is ${full_name}, n is ${n}, m is ${m}`);
-  let path : string[] = document.location.pathname.split("/");
-  let room_uuid : string = path[path.length - 1];
-  socket.emit('joinRoom', { room_uuid, full_name });
+  let path: string[] = document.location.pathname.split("/");
+  let room_uuid: string = path[path.length - 1];
+  socket.emit("joinRoom", { room_uuid, full_name });
   var game = new Game(n, m);
-  document.getElementById(`playAgainBtn`)?.addEventListener("click", () =>  {
+  document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
     console.log(`\nrestarting game\n`);
     game = new Game(n, m);
+    document.getElementById("Holder2")!.setAttribute("x-data", "{ open: true }");
   });
 } else {
   console.log(`didnt go to gotName if:${gotName}`);

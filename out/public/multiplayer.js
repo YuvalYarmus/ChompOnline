@@ -21,10 +21,10 @@ socket.on(`ChatMessage`, (message) => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 // Get room and users
-socket.on('outputRoom', (room) => {
+socket.on("outputRoom", (room) => {
     outputRoomName(room);
 });
-socket.on('outputUsers', (users) => {
+socket.on("outputUsers", (users) => {
     outputUsers(users);
 });
 chatForm.addEventListener(`submit`, (e) => {
@@ -58,9 +58,9 @@ function outputRoomName(room) {
 }
 // Add users to DOM
 function outputUsers(users) {
-    userList.innerHTML = '';
+    userList.innerHTML = "";
     users.forEach((user) => {
-        const li = document.createElement('li');
+        const li = document.createElement("li");
         li.innerText = user.name;
         userList.appendChild(li);
     });
@@ -116,11 +116,12 @@ if (getURLParam("full_name") != null) {
     console.log(`full_name is ${full_name}, n is ${n}, m is ${m}`);
     let path = document.location.pathname.split("/");
     let room_uuid = path[path.length - 1];
-    socket.emit('joinRoom', { room_uuid, full_name });
+    socket.emit("joinRoom", { room_uuid, full_name });
     var game = new Game(n, m);
     document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
         console.log(`\nrestarting game\n`);
         game = new Game(n, m);
+        document.getElementById("Holder2").setAttribute("x-data", "{ open: true }");
     });
 }
 else {

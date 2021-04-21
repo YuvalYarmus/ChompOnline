@@ -157,7 +157,7 @@
         "affectsGlobalScope": false
       },
       "../../src/public/multiplayer.ts": {
-        "version": "002b40fd6518b0a4e79abc9b293b5522129245b1ef90ef3a4f91b71c61b89887",
+        "version": "ac6bbdbede32eb33ac35c4e47ce100b5cb65101204f8ecd62b05133056ba6546",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },
@@ -479,6 +479,11 @@
       "../../node_modules/@types/parse-json/index.d.ts": {
         "version": "2b8264b2fefd7367e0f20e2c04eed5d3038831fe00f5efbc110ff0131aab899b",
         "signature": "2b8264b2fefd7367e0f20e2c04eed5d3038831fe00f5efbc110ff0131aab899b",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/semver/index.d.ts": {
+        "version": "bb95470284971cf0cce66a339224fa5db412729bf3e22c2c02a1c343fd4444ab",
+        "signature": "bb95470284971cf0cce66a339224fa5db412729bf3e22c2c02a1c343fd4444ab",
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/socket.io-parser/index.d.ts": {
@@ -1171,6 +1176,7 @@
       "../../node_modules/@types/parse-json/index.d.ts",
       "../../node_modules/@types/qs/index.d.ts",
       "../../node_modules/@types/range-parser/index.d.ts",
+      "../../node_modules/@types/semver/index.d.ts",
       "../../node_modules/@types/serve-static/index.d.ts",
       "../../node_modules/@types/socket.io-client/index.d.ts",
       "../../node_modules/@types/socket.io-parser/index.d.ts",
