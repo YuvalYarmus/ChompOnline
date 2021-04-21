@@ -37,7 +37,7 @@
     "typescript": "^4.2.3",
     "@types/mongoose": "^5.10.4",
     "@types/qs": "^6.9.6",
-    "@types/socket.io-client": "^1.4.36",
+    "@types/socket.io-client": "^1.4.36"
   },
   "dependencies": {
     "moment": "^2.29.1",
