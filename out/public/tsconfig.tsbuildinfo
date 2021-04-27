@@ -142,8 +142,8 @@
         "affectsGlobalScope": true
       },
       "../../src/public/game.ts": {
-        "version": "62cb0e1be5509f9a0a4d188692851196e6a04d54add17dc54c72d884121d3e2d",
-        "signature": "2f3b6b9a1a42c80ede5810c927929131130c0648f166ece2136ce09d57974851",
+        "version": "d5abbf519f87d08f2803a4d723a1c7bc7429e73c7a363229e20b4e8e152e98dc",
+        "signature": "ef6b99a0b534ccbeb1a9b9a493b42f6f53382923b3f77c96f3357946a2ecbbe8",
         "affectsGlobalScope": false
       },
       "../../src/public/loader.ts": {
@@ -157,7 +157,7 @@
         "affectsGlobalScope": false
       },
       "../../src/public/multiplayer.ts": {
-        "version": "1f88023c5953c0feb5958fdb0f4b6c813961db7c4f4888b4db110aefaf710988",
+        "version": "be3e2a19045fc0e53de116d2ad72ebb393fe527ca7bcb59a6dec9b04f82f2816",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },
@@ -479,6 +479,11 @@
       "../../node_modules/@types/parse-json/index.d.ts": {
         "version": "2b8264b2fefd7367e0f20e2c04eed5d3038831fe00f5efbc110ff0131aab899b",
         "signature": "2b8264b2fefd7367e0f20e2c04eed5d3038831fe00f5efbc110ff0131aab899b",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/semver/index.d.ts": {
+        "version": "bb95470284971cf0cce66a339224fa5db412729bf3e22c2c02a1c343fd4444ab",
+        "signature": "bb95470284971cf0cce66a339224fa5db412729bf3e22c2c02a1c343fd4444ab",
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/socket.io-parser/index.d.ts": {
@@ -1171,6 +1176,7 @@
       "../../node_modules/@types/parse-json/index.d.ts",
       "../../node_modules/@types/qs/index.d.ts",
       "../../node_modules/@types/range-parser/index.d.ts",
+      "../../node_modules/@types/semver/index.d.ts",
       "../../node_modules/@types/serve-static/index.d.ts",
       "../../node_modules/@types/socket.io-client/index.d.ts",
       "../../node_modules/@types/socket.io-parser/index.d.ts",

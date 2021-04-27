@@ -29,7 +29,7 @@ export default class Game {
     turns: number;
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    constructor();
+    constructor(n?: number, m?: number);
     /**
      * redrawing the board on every page resize
      */
@@ -44,6 +44,7 @@ export default class Game {
      */
     promptGameState(): void;
     updateGameStateArray(gameStateArray: boolState): void;
+    resetGameStateArray(n?: number, m?: number): void;
     updateGameStateShapes(gameStateShapes: Shape[]): void;
     fitShapesToCanvas(canvas: HTMLCanvasElement, game_state: GameState): Shape[];
     /**
