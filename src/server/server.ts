@@ -273,7 +273,7 @@ app.get(
   }
 );
 app.get(
-  ["/", "/index", "/index.html", "/public/index.html", "./index.html"],
+  ["/", "/index", "/index.html", "/public/index.html", "./index.html", "/html/index.html"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("initial get any"); // @ts-ignore
     res.sendFile(path.join(__dirname, "../../html", "index.html"));

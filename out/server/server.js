@@ -290,7 +290,7 @@ app.get("*/404", function (req, res, next) {
     res.sendFile("404.html", { root: path.join(__dirname, "../../", "html") });
     // next();
 });
-app.get(["/", "/index", "/index.html", "/public/index.html", "./index.html"], (req, res) => {
+app.get(["/", "/index", "/index.html", "/public/index.html", "./index.html", "/html/index.html"], (req, res) => {
     if (log_get === true)
         console.log("initial get any"); // @ts-ignore
     res.sendFile(path.join(__dirname, "../../html", "index.html"));
