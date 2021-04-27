@@ -9,6 +9,7 @@ if (chatForm === null)
 const chatMessages = document.querySelector(".chat-messages");
 const roomName = document.getElementById("room-name");
 const userList = document.getElementById("users");
+const canvas = document.getElementById("canvas");
 socket.on(`message`, (message) => {
     outputMessage(message);
     // Scroll down
@@ -118,6 +119,15 @@ if (getURLParam("full_name") != null) {
     let room_uuid = path[path.length - 1];
     socket.emit("joinRoom", { room_uuid, full_name });
     var game = new Game(n, m);
+    canvas.addEventListener("click", (e) => {
+        game.clickFunc(e);
+        let turns = game.turns, gameState = game.globalGameState.array;
+        socket.emit("makeMove", { gameState, turns, room_uuid });
+    });
+    socket.on(`passMove`, (gameState) => {
+        game.updateShapesDrawStateByArray(gameState);
+        game.drawShapes();
+    });
     document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
         console.log(`\nrestarting game\n`);
         game = new Game(n, m);

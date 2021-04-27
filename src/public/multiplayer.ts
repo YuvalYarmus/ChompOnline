@@ -10,6 +10,7 @@ if (chatForm === null) alert("is null");
 const chatMessages = document.querySelector(".chat-messages")!;
 const roomName = document.getElementById("room-name")!;
 const userList = document.getElementById("users")!;
+const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
 socket.on(`message`, (message: formatedMessage) => {
   outputMessage(message);
@@ -131,6 +132,16 @@ if (getURLParam("full_name") != null) {
   let room_uuid: string = path[path.length - 1];
   socket.emit("joinRoom", { room_uuid, full_name });
   var game = new Game(n, m);
+  canvas.addEventListener("click", (e) => {
+    game.clickFunc(e);
+    let turns = game.turns, gameState = game.globalGameState.array; 
+    socket.emit("makeMove", {gameState, turns, room_uuid});
+  });
+  type boolState = boolean[][];
+  socket.on(`passMove`, (gameState : boolState) => {
+    game.updateShapesDrawStateByArray(gameState);
+    game.drawShapes();
+  })
   document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
     console.log(`\nrestarting game\n`);
     game = new Game(n, m);

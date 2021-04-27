@@ -276,6 +276,20 @@ io.on(`connection`, (WebSocket) => {
         // query returns a list so the result will be [user]. to grab the name use => currentUser[0].name
         io.to(currentUser[0].current_room.toString()).emit(`ChatMessage`, new messages_1.formatedMessage(currentUser[0].name, msg));
     }));
+    WebSocket.on(`makeMove`, (obj) => __awaiter(void 0, void 0, void 0, function* () {
+        const users = yield getRoomUsers(obj.room_uuid);
+        // && (obj.turns % 2 === i + 1 || obj.turns)
+        let isFirst2 = false;
+        for (let i = 0; i < 2 && i < users.length; i++) {
+            if (users[i].user_id === WebSocket.id) {
+                //if ((obj.turns % 2 === 0 && i === 1) || (obj.turns % 2 === 1 && i === 0))
+                WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
+                isFirst2 = true;
+            }
+        }
+        if (!isFirst2)
+            WebSocket.emit(`message`, new messages_1.formatedMessage(bot_name, "You are not allowed to make moves as you are not one of the first 2 players who entered the room"));
+    }));
 });
 // console.log("path is " + path.join(__dirname, "../../", "html"));
 // console.log("about to handle Requests");

@@ -204,6 +204,13 @@ type joinRoomObject = {
   full_name: string;
   room_uuid: string;
 };
+type boolState = boolean[][];
+
+type MoveObject = {
+  gameState : boolState;
+  turns : number;
+  room_uuid : string
+}
 
 // socket io handles
 io.on(`connection`, (WebSocket: any) => {
@@ -253,6 +260,23 @@ io.on(`connection`, (WebSocket: any) => {
     const currentUser : any = await getCurrentUserFromUsers(WebSocket.id); 
     // query returns a list so the result will be [user]. to grab the name use => currentUser[0].name
     io.to(currentUser[0].current_room.toString()).emit(`ChatMessage`, new formatedMessage(currentUser[0].name, msg));
+  });
+
+  WebSocket.on(`makeMove`, async (obj : MoveObject) => {
+    const users = await getRoomUsers(obj.room_uuid);
+    // && (obj.turns % 2 === i + 1 || obj.turns)
+    let isFirst2 = false;
+    for(let i = 0; i < 2 && i < users.length; i++) {
+      if (users[i].user_id === WebSocket.id  ) {
+        //if ((obj.turns % 2 === 0 && i === 1) || (obj.turns % 2 === 1 && i === 0))
+        WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
+        isFirst2 = true;
+      }
+    }
+    if (!isFirst2) WebSocket.emit(`message`, new formatedMessage(
+      bot_name,
+      "You are not allowed to make moves as you are not one of the first 2 players who entered the room"
+    ))
   });
 });
 
