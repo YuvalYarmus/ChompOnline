@@ -23,7 +23,10 @@ const io = socketio(server);
 const { v4: uuidV4, validate: uuidValidate } = require("uuid");
 const messages_1 = require("../common/messages");
 // const mongoose = require("mongoose");
-const uri = "mongodb+srv://YuvalYarmus:test123@cluster0.793qx.mongodb.net/ChompOnline?retryWrites=true&w=majority&authSource=admin";
+// const uri =
+//   "mongodb+srv://YuvalYarmus:test123@cluster0.793qx.mongodb.net/ChompOnline?retryWrites=true&w=majority&authSource=admin";
+require('custom-env').env('staging');
+const uri = process.env.URI;
 const settings = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
