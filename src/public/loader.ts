@@ -51,13 +51,18 @@ function redirect() {
         else  {
             window.location.replace(window.location.href + "/404")
         }
+        let style = `style="color:grey; padding-top:10px;"`;
         let text : string = `
         <main class="join-main">
         <form id="form" class="form" action="${page}">
             <input id="full_name" placeholder="Plese enter your name" name="full_name" required>
+            <label for="n" ${style}>The amount of columns:</label>
+            <input type="number" id="n" name="n" min="2" max="8">
+            <label for="m" ${style}>The amount of rows:</label>
+            <input type="number" id="m" name="m" min="2" max="8">
             <button type="submit" class="btn">Start the game!</button>
         </form></main>
-        `; 
+        `;
         var node= document.getElementById("container2")!;
         node.innerHTML = text; 
     }
