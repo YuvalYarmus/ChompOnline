@@ -336,10 +336,13 @@ io.on(`connection`, (WebSocket: any) => {
         isFirst2 = true;
       }
     }
-    if (!isFirst2) WebSocket.emit(`message`, new formatedMessage(
-      bot_name,
-      "You are not allowed to make moves as you are not one of the first 2 players who entered the room"
-    ));
+    if (!isFirst2) {
+      WebSocket.emit(`message`, new formatedMessage(
+        bot_name,
+        "You are not allowed to make moves as you are not one of the first 2 players who entered the room"
+      ));
+      WebSocket.emit(`fixBoard`, gameState);
+    } 
   });
 
 });

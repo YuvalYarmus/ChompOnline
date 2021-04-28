@@ -357,8 +357,10 @@ io.on(`connection`, (WebSocket) => {
                 isFirst2 = true;
             }
         }
-        if (!isFirst2)
+        if (!isFirst2) {
             WebSocket.emit(`message`, new messages_1.formatedMessage(bot_name, "You are not allowed to make moves as you are not one of the first 2 players who entered the room"));
+            WebSocket.emit(`fixBoard`, gameState);
+        }
     }));
 });
 // console.log("path is " + path.join(__dirname, "../../", "html"));

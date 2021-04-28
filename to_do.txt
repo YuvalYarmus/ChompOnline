@@ -25,14 +25,16 @@ TO DO LIST:
 
 -Done 1. change the room schema to include the game state and turns
 
-2. change the code in the server so that it updates turns and game state on each move made
+-Done 2. change the code in the server so that it updates turns and game state on each move made
 
-3. change the code in the server so that when someone makes an illegal it will emit 
+-Done 3. change the code in the server so that when someone makes an illegal it will emit 
 a correction with the game state from the database
 
-4. change the code in the server so that it properly checks the whos turn is it
+-Done 4. change the code in the server so that it properly checks the whos turn is it
 
-5. start working on the bot!!!!!!!!!!!!!!
+5. Take care of restarting the game
+
+6. start working on the bot!!!!!!!!!!!!!!
 
 
 
