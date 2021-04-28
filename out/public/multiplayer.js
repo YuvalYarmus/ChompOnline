@@ -128,6 +128,10 @@ if (getURLParam("full_name") != null) {
         game.updateShapesDrawStateByArray(gameState);
         game.drawShapes();
     });
+    socket.on(`fixBoard`, (gameState) => {
+        game.updateShapesDrawStateByArray(gameState);
+        game.drawShapes();
+    });
     document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
         console.log(`\nrestarting game\n`);
         game = new Game(n, m);

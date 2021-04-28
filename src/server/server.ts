@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import { ALL, Resolver } from "node:dns";
 import { resolve } from "node:path";
 import { stringify } from "qs";
+// declare var Qs: any;
+var Qs = require('qs');
 const path = require("path");
 const http = require("http");
 const socketio = require("socket.io");
@@ -80,11 +82,13 @@ async function addUserToUsers(socket_id: any, username: string, room: string) {
   });
 }
 
-async function createRoom(uuid: string) {
+async function createRoom(uuid: string, n : number, m : number) {
   const room = new Room({
     population: 0,
     uuid: uuid,
     users: [],
+    gameState : createGameState(n , m),
+    currTurn : 0
   });
   return new Promise<roomObject>(async (resolve, reject) => {
     try {
@@ -94,6 +98,26 @@ async function createRoom(uuid: string) {
     } catch (err) {
       reject(`got an error in saving a room: ${err}`);
     }
+  });
+}
+
+async function updateMoveInRoom(uuidRoom : string, gameState : boolState) {
+  return new Promise<roomObject>((resolve, reject) => {
+    const query = Room.where({ uuid: uuidRoom });
+    query.findOne(async function (err: any, room: RoomDoc) {
+      if (err) reject(`got an error in querying ${err}`);
+      else if (room === null) reject(`no such room found`);
+      else {
+        room.currTurn += 1;
+        room.gameState = gameState; 
+        try {
+          const result = await room.save();
+          resolve(result);
+        } catch (e) {
+          reject(`\nerror in saving a room when trying to update a move: ${e}\n`);
+        }
+      }
+    });
   });
 }
 
@@ -146,6 +170,22 @@ async function getRoomUsers(uuidRoom: string) {
   });
 }
 
+
+async function getRoomGameStateAndTurns(uuidRoom: string) {
+  return new Promise<[boolState, number]>((resolve, reject) => {
+    const query = Room.where({ uuid: uuidRoom });
+    query.findOne(async function (err: any, room: any) {
+      if (err) reject(`got an error in querying ${err}`);
+      else if (room === null) reject(`no such room found`);
+      else {
+        const gameState = room.gameState;
+        const turn = room.currTurn;
+        resolve([gameState, turn]);
+      }
+    });
+  });
+}
+
 async function removeCurrentUserFromUsers(socket_id:any) {
   return new Promise<userObject>( async (resolve, reject ) => {
     const query = User.where({ "user_id": socket_id.toString() });
@@ -189,10 +229,25 @@ async function handleEmptyRoom(uuidRoom : string) {
   });
 }
 
+function createGameState(n : number, m : number) {
+  let arr: boolean[][] = [];
+  if (n != null && m != null) {
+    for (let i = 0; i < n; i++) {
+      arr.push([]);
+      for (let j = 0; j < m; j++) {
+        arr[i].push(true);
+      }
+    }
+  }
+  return arr;
+}
+
 type roomObject = {
   population: number;
   uuid: string;
   users: [userObject];
+  gameState : boolState;
+  currTurn : number;
 };
 type userObject = {
   user_id: any;
@@ -264,20 +319,29 @@ io.on(`connection`, (WebSocket: any) => {
 
   WebSocket.on(`makeMove`, async (obj : MoveObject) => {
     const users = await getRoomUsers(obj.room_uuid);
-    // && (obj.turns % 2 === i + 1 || obj.turns)
+    const res = await getRoomGameStateAndTurns(obj.room_uuid);
+    const gameState = res[0], turns = res[1];
     let isFirst2 = false;
     for(let i = 0; i < 2 && i < users.length; i++) {
       if (users[i].user_id === WebSocket.id  ) {
-        //if ((obj.turns % 2 === 0 && i === 1) || (obj.turns % 2 === 1 && i === 0))
-        WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
+        // console.log(`Game turns passed is: ${turns}\nGameState is ${gameState}\n`);
+        if ((turns % 2 === 0 && i === 1) || (turns % 2 === 1 && i === 0)) {
+          WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
+          const room = await updateMoveInRoom(obj.room_uuid, obj.gameState);
+        }
+        else {
+          WebSocket.emit(`message`, new formatedMessage(bot_name, "Please wait for your turn"));
+          WebSocket.emit(`fixBoard`, gameState);
+        }
         isFirst2 = true;
       }
     }
     if (!isFirst2) WebSocket.emit(`message`, new formatedMessage(
       bot_name,
       "You are not allowed to make moves as you are not one of the first 2 players who entered the room"
-    ))
+    ));
   });
+
 });
 
 // console.log("path is " + path.join(__dirname, "../../", "html"));
@@ -479,8 +543,15 @@ app.get(
 );
 
 async function returnRedirectUrl(req: express.Request, res: express.Response) {
+  // console.log(`in returnRedirectUrl`);
   const params: string[] = req.originalUrl.toString().split("?");
+  // console.log(`\nparams is: ${params}`);
   const paramString: string = "?" + params[params.length - 1];
+  // console.log(`\nparamString is: ${paramString}`);
+  const { full_name, n, m } = Qs.parse(paramString, {
+    ignoreQueryPrefix: true,
+  });
+  // console.log(`param string is: ${paramString}\nqs params are: name: ${full_name}, ${n}, ${m}`);
   const uuid = uuidV4();
   const redirect_url =
     `${req.protocol}://${req.get("host")}` +
@@ -489,7 +560,7 @@ async function returnRedirectUrl(req: express.Request, res: express.Response) {
     `${paramString}`;
   if (log_get === true) console.log(`redirect_url:${redirect_url}`);
   try {
-    const room: roomObject = await createRoom(uuid);
+    const room: roomObject = await createRoom(uuid, n, m);
     return redirect_url;
   } catch (err) {
     console.log(`error in returnRedirectUrl:${err}`);

@@ -40,6 +40,16 @@ const roomSchema = new Schema({
         type: [userSchema],
         required: false,
         default: []
+    },
+    gameState: {
+        type: [[]],
+        required: true,
+        default: [[]]
+    },
+    currTurn: {
+        type: Number,
+        required: true,
+        default: 0
     }
 }, { timestamps: true });
 exports.Room = mongoose_1.default.model("Room", roomSchema);

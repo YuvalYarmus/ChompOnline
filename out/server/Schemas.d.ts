@@ -4,10 +4,14 @@ export interface UserDoc extends mongoose.Document {
     name: string;
     current_room: string;
 }
+declare type boolState = boolean[][];
 export interface RoomDoc extends mongoose.Document {
     population: number;
     uuid: string;
     users: [UserDoc];
+    gameState: boolState;
+    currTurn: number;
 }
 export declare const Room: mongoose.Model<RoomDoc, {}>;
 export declare const User: mongoose.Model<UserDoc, {}>;
+export {};

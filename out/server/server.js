@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
+// declare var Qs: any;
+var Qs = require('qs');
 const path = require("path");
 const http = require("http");
 const socketio = require("socket.io");
@@ -101,12 +103,14 @@ function addUserToUsers(socket_id, username, room) {
         }));
     });
 }
-function createRoom(uuid) {
+function createRoom(uuid, n, m) {
     return __awaiter(this, void 0, void 0, function* () {
         const room = new Schemas_1.Room({
             population: 0,
             uuid: uuid,
             users: [],
+            gameState: createGameState(n, m),
+            currTurn: 0
         });
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -119,6 +123,32 @@ function createRoom(uuid) {
                 reject(`got an error in saving a room: ${err}`);
             }
         }));
+    });
+}
+function updateMoveInRoom(uuidRoom, gameState) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.Room.where({ uuid: uuidRoom });
+            query.findOne(function (err, room) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (room === null)
+                        reject(`no such room found`);
+                    else {
+                        room.currTurn += 1;
+                        room.gameState = gameState;
+                        try {
+                            const result = yield room.save();
+                            resolve(result);
+                        }
+                        catch (e) {
+                            reject(`\nerror in saving a room when trying to update a move: ${e}\n`);
+                        }
+                    }
+                });
+            });
+        });
     });
 }
 function removeRoomUser(socket_id) {
@@ -187,6 +217,26 @@ function getRoomUsers(uuidRoom) {
         });
     });
 }
+function getRoomGameStateAndTurns(uuidRoom) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.Room.where({ uuid: uuidRoom });
+            query.findOne(function (err, room) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (room === null)
+                        reject(`no such room found`);
+                    else {
+                        const gameState = room.gameState;
+                        const turn = room.currTurn;
+                        resolve([gameState, turn]);
+                    }
+                });
+            });
+        });
+    });
+}
 function removeCurrentUserFromUsers(socket_id) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
@@ -245,6 +295,18 @@ function handleEmptyRoom(uuidRoom) {
         });
     });
 }
+function createGameState(n, m) {
+    let arr = [];
+    if (n != null && m != null) {
+        for (let i = 0; i < n; i++) {
+            arr.push([]);
+            for (let j = 0; j < m; j++) {
+                arr[i].push(true);
+            }
+        }
+    }
+    return arr;
+}
 // socket io handles
 io.on(`connection`, (WebSocket) => {
     // console.log("new web socket connection");
@@ -278,12 +340,20 @@ io.on(`connection`, (WebSocket) => {
     }));
     WebSocket.on(`makeMove`, (obj) => __awaiter(void 0, void 0, void 0, function* () {
         const users = yield getRoomUsers(obj.room_uuid);
-        // && (obj.turns % 2 === i + 1 || obj.turns)
+        const res = yield getRoomGameStateAndTurns(obj.room_uuid);
+        const gameState = res[0], turns = res[1];
         let isFirst2 = false;
         for (let i = 0; i < 2 && i < users.length; i++) {
             if (users[i].user_id === WebSocket.id) {
-                //if ((obj.turns % 2 === 0 && i === 1) || (obj.turns % 2 === 1 && i === 0))
-                WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
+                // console.log(`Game turns passed is: ${turns}\nGameState is ${gameState}\n`);
+                if ((turns % 2 === 0 && i === 1) || (turns % 2 === 1 && i === 0)) {
+                    WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
+                    const room = yield updateMoveInRoom(obj.room_uuid, obj.gameState);
+                }
+                else {
+                    WebSocket.emit(`message`, new messages_1.formatedMessage(bot_name, "Please wait for your turn"));
+                    WebSocket.emit(`fixBoard`, gameState);
+                }
                 isFirst2 = true;
             }
         }
@@ -446,8 +516,15 @@ app.get(["/multiplayer", "/multiplayer.html", "./multiplayer", "/html/multiplaye
 }));
 function returnRedirectUrl(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        // console.log(`in returnRedirectUrl`);
         const params = req.originalUrl.toString().split("?");
+        // console.log(`\nparams is: ${params}`);
         const paramString = "?" + params[params.length - 1];
+        // console.log(`\nparamString is: ${paramString}`);
+        const { full_name, n, m } = Qs.parse(paramString, {
+            ignoreQueryPrefix: true,
+        });
+        // console.log(`param string is: ${paramString}\nqs params are: name: ${full_name}, ${n}, ${m}`);
         const uuid = uuidV4();
         const redirect_url = `${req.protocol}://${req.get("host")}` +
             req.path +
@@ -456,7 +533,7 @@ function returnRedirectUrl(req, res) {
         if (log_get === true)
             console.log(`redirect_url:${redirect_url}`);
         try {
-            const room = yield createRoom(uuid);
+            const room = yield createRoom(uuid, n, m);
             return redirect_url;
         }
         catch (err) {

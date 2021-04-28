@@ -141,7 +141,11 @@ if (getURLParam("full_name") != null) {
   socket.on(`passMove`, (gameState : boolState) => {
     game.updateShapesDrawStateByArray(gameState);
     game.drawShapes();
-  })
+  });
+  socket.on(`fixBoard`, (gameState : boolState) => {
+    game.updateShapesDrawStateByArray(gameState);
+    game.drawShapes();
+  });
   document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
     console.log(`\nrestarting game\n`);
     game = new Game(n, m);
