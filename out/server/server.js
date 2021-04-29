@@ -69,7 +69,9 @@ function addUserToRoom(socket_id, username, room) {
                         reject(`no such room found`);
                     else {
                         room.users.push(new_user);
-                        room.population += 1;
+                        let newPopulation = room.population.valueOf();
+                        newPopulation += 1;
+                        room.population = newPopulation;
                         try {
                             const result = yield room.save();
                             if (log_get)
@@ -103,14 +105,16 @@ function addUserToUsers(socket_id, username, room) {
         }));
     });
 }
-function createRoom(uuid, n, m) {
+function createRoom(uuid, n1, m1) {
     return __awaiter(this, void 0, void 0, function* () {
         const room = new Schemas_1.Room({
             population: 0,
             uuid: uuid,
             users: [],
-            gameState: createGameState(n, m),
-            currTurn: 0
+            gameState: createGameState(n1, m1),
+            currTurn: 0,
+            n: n1,
+            m: m1
         });
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -125,7 +129,7 @@ function createRoom(uuid, n, m) {
         }));
     });
 }
-function updateMoveInRoom(uuidRoom, gameState) {
+function updateMoveInRoom(uuidRoom, gameState, turns = -1) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
             const query = Schemas_1.Room.where({ uuid: uuidRoom });
@@ -136,7 +140,14 @@ function updateMoveInRoom(uuidRoom, gameState) {
                     else if (room === null)
                         reject(`no such room found`);
                     else {
-                        room.currTurn += 1;
+                        if (turns === -1) {
+                            let newTurn = room.currTurn.valueOf();
+                            newTurn += 1;
+                            room.currTurn = newTurn;
+                        }
+                        else {
+                            room.currTurn = turns;
+                        }
                         room.gameState = gameState;
                         try {
                             const result = yield room.save();
@@ -177,7 +188,9 @@ function removeRoomUser(socket_id) {
                                 }
                                 if (index !== -1) {
                                     const removed = room.users.splice(index, 1);
-                                    room.population -= 1;
+                                    let newPopulation = room.population.valueOf();
+                                    newPopulation -= 1;
+                                    room.population = newPopulation;
                                     console.log(`the user which was removed: ${removed}`);
                                     try {
                                         yield room.save();
@@ -231,6 +244,26 @@ function getRoomGameStateAndTurns(uuidRoom) {
                         const gameState = room.gameState;
                         const turn = room.currTurn;
                         resolve([gameState, turn]);
+                    }
+                });
+            });
+        });
+    });
+}
+function getRoomBoardSize(uuidRoom) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.Room.where({ uuid: uuidRoom });
+            query.findOne(function (err, room) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (room === null)
+                        reject(`no such room found`);
+                    else {
+                        const n = room.n.valueOf();
+                        const m = room.m.valueOf();
+                        resolve([n, m]);
                     }
                 });
             });
@@ -338,6 +371,13 @@ io.on(`connection`, (WebSocket) => {
         // query returns a list so the result will be [user]. to grab the name use => currentUser[0].name
         io.to(currentUser[0].current_room.toString()).emit(`ChatMessage`, new messages_1.formatedMessage(currentUser[0].name, msg));
     }));
+    WebSocket.on(`restartGame`, (uuidRoom) => __awaiter(void 0, void 0, void 0, function* () {
+        const res = yield getRoomBoardSize(uuidRoom);
+        const n = res[0], m = res[1];
+        const resetBoard = createGameState(n, m);
+        yield updateMoveInRoom(uuidRoom, resetBoard);
+        io.to(uuidRoom).emit(`passMove`, resetBoard);
+    }));
     WebSocket.on(`makeMove`, (obj) => __awaiter(void 0, void 0, void 0, function* () {
         const users = yield getRoomUsers(obj.room_uuid);
         const res = yield getRoomGameStateAndTurns(obj.room_uuid);
@@ -346,7 +386,7 @@ io.on(`connection`, (WebSocket) => {
         for (let i = 0; i < 2 && i < users.length; i++) {
             if (users[i].user_id === WebSocket.id) {
                 // console.log(`Game turns passed is: ${turns}\nGameState is ${gameState}\n`);
-                if ((turns % 2 === 0 && i === 1) || (turns % 2 === 1 && i === 0)) {
+                if ((turns.valueOf() % 2 === 0 && i === 1) || (turns.valueOf() % 2 === 1 && i === 0)) {
                     WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
                     const room = yield updateMoveInRoom(obj.room_uuid, obj.gameState);
                 }

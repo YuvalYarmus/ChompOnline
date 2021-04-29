@@ -157,7 +157,7 @@
         "affectsGlobalScope": false
       },
       "../../src/public/multiplayer.ts": {
-        "version": "7c2dd55d031848b657a7d34135cdf015f0d3d696ad6ab758eb76d1b3223daf71",
+        "version": "512f11cafaa17c38c15817eedb540c5127572edef89f52b43f264ba967001f8f",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       },

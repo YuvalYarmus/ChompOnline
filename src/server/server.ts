@@ -41,19 +41,21 @@ async function connectToDB() {
 connectToDB();
 console.log(`should be connected to db`);
 async function addUserToRoom(socket_id: any, username: string, room: string) {
-  const new_user: userObject = new User({
+  const new_user: UserDoc = new User({
     user_id: socket_id,
     name: username,
     current_room: room,
   });
   return new Promise<userObject>((resolve, reject) => {
     const query = Room.where({ uuid: room });
-    query.findOne(async function (err: any, room: any) {
+    query.findOne(async function (err: any, room: RoomDoc) {
       if (err) reject(`got an error in querying ${err}`);
       else if (room === null) reject(`no such room found`);
       else {
         room.users.push(new_user);
-        room.population += 1;
+        let newPopulation = room.population.valueOf();
+        newPopulation += 1;
+        room.population = newPopulation;
         try {
           const result = await room.save();
           if (log_get) console.log(`saved room => result:\n${result}`);
@@ -82,15 +84,17 @@ async function addUserToUsers(socket_id: any, username: string, room: string) {
   });
 }
 
-async function createRoom(uuid: string, n : number, m : number) {
+async function createRoom(uuid: string, n1 : number, m1 : number) {
   const room = new Room({
     population: 0,
     uuid: uuid,
     users: [],
-    gameState : createGameState(n , m),
-    currTurn : 0
+    gameState : createGameState(n1 , m1),
+    currTurn : 0,
+    n : n1,
+    m: m1
   });
-  return new Promise<roomObject>(async (resolve, reject) => {
+  return new Promise<RoomDoc>(async (resolve, reject) => {
     try {
       const result = await room.save();
       if (log_get)  console.log(`managed to save the room to the databse:\n${result}`);
@@ -101,14 +105,21 @@ async function createRoom(uuid: string, n : number, m : number) {
   });
 }
 
-async function updateMoveInRoom(uuidRoom : string, gameState : boolState) {
-  return new Promise<roomObject>((resolve, reject) => {
+async function updateMoveInRoom(uuidRoom : string, gameState : boolState, turns : number = -1) {
+  return new Promise<RoomDoc>((resolve, reject) => {
     const query = Room.where({ uuid: uuidRoom });
     query.findOne(async function (err: any, room: RoomDoc) {
       if (err) reject(`got an error in querying ${err}`);
       else if (room === null) reject(`no such room found`);
       else {
-        room.currTurn += 1;
+        if (turns === -1) {
+          let newTurn = room.currTurn.valueOf();
+          newTurn += 1;
+          room.currTurn = newTurn;
+        }
+        else {
+          room.currTurn = turns;
+        }
         room.gameState = gameState; 
         try {
           const result = await room.save();
@@ -142,7 +153,9 @@ async function removeRoomUser(socket_id:any) {
             }
             if (index !== -1) {
               const removed = room.users.splice(index, 1);
-              room.population -= 1;
+              let newPopulation = room.population.valueOf();
+              newPopulation -= 1;
+              room.population = newPopulation;
               console.log(`the user which was removed: ${removed}`);
               try { await room.save(); resolve(removed[0]); } 
               catch(err) { console.log(`\nfailed to save room:${room}\nError:${err}`); reject(err);}              
@@ -159,7 +172,7 @@ async function removeRoomUser(socket_id:any) {
 async function getRoomUsers(uuidRoom: string) {
   return new Promise<[userObject]>((resolve, reject) => {
     const query = Room.where({ uuid: uuidRoom });
-    query.findOne(async function (err: any, room: any) {
+    query.findOne(async function (err: any, room: RoomDoc) {
       if (err) reject(`got an error in querying ${err}`);
       else if (room === null) reject(`no such room found`);
       else {
@@ -172,15 +185,30 @@ async function getRoomUsers(uuidRoom: string) {
 
 
 async function getRoomGameStateAndTurns(uuidRoom: string) {
-  return new Promise<[boolState, number]>((resolve, reject) => {
+  return new Promise<[boolState, Number]>((resolve, reject) => {
     const query = Room.where({ uuid: uuidRoom });
-    query.findOne(async function (err: any, room: any) {
+    query.findOne(async function (err: any, room: RoomDoc) {
       if (err) reject(`got an error in querying ${err}`);
       else if (room === null) reject(`no such room found`);
       else {
         const gameState = room.gameState;
         const turn = room.currTurn;
         resolve([gameState, turn]);
+      }
+    });
+  });
+}
+
+async function getRoomBoardSize(uuidRoom : string) {
+  return new Promise<[number, number]>((resolve, reject) => {
+    const query = Room.where({ uuid: uuidRoom });
+    query.findOne(async function (err: any, room: RoomDoc) {
+      if (err) reject(`got an error in querying ${err}`);
+      else if (room === null) reject(`no such room found`);
+      else {
+        const n = room.n.valueOf();
+        const m = room.m.valueOf();
+        resolve([n, m]);
       }
     });
   });
@@ -295,7 +323,7 @@ io.on(`connection`, (WebSocket: any) => {
     WebSocket.broadcast.to(joinObject.room_uuid).emit(`message`, greet_user_join);
     WebSocket.emit(`outputRoom`, joinObject.room_uuid);
     const users = await getRoomUsers(joinObject.room_uuid);
-    io.to(joinObject.room_uuid).emit(`outputUsers`, users)
+    io.to(joinObject.room_uuid).emit(`outputUsers`, users);
   });
 
   WebSocket.on(`disconnect`, async () => {
@@ -317,6 +345,14 @@ io.on(`connection`, (WebSocket: any) => {
     io.to(currentUser[0].current_room.toString()).emit(`ChatMessage`, new formatedMessage(currentUser[0].name, msg));
   });
 
+  WebSocket.on(`restartGame`, async (uuidRoom : string) => {
+    const res = await getRoomBoardSize(uuidRoom);
+    const n = res[0], m = res[1];
+    const resetBoard = createGameState(n, m);
+    await updateMoveInRoom(uuidRoom, resetBoard);
+    io.to(uuidRoom).emit(`passMove`, resetBoard);
+  });
+
   WebSocket.on(`makeMove`, async (obj : MoveObject) => {
     const users = await getRoomUsers(obj.room_uuid);
     const res = await getRoomGameStateAndTurns(obj.room_uuid);
@@ -325,7 +361,7 @@ io.on(`connection`, (WebSocket: any) => {
     for(let i = 0; i < 2 && i < users.length; i++) {
       if (users[i].user_id === WebSocket.id  ) {
         // console.log(`Game turns passed is: ${turns}\nGameState is ${gameState}\n`);
-        if ((turns % 2 === 0 && i === 1) || (turns % 2 === 1 && i === 0)) {
+        if ((turns.valueOf() % 2 === 0 && i === 1) || (turns.valueOf() % 2 === 1 && i === 0)) {
           WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
           const room = await updateMoveInRoom(obj.room_uuid, obj.gameState);
         }
@@ -563,7 +599,7 @@ async function returnRedirectUrl(req: express.Request, res: express.Response) {
     `${paramString}`;
   if (log_get === true) console.log(`redirect_url:${redirect_url}`);
   try {
-    const room: roomObject = await createRoom(uuid, n, m);
+    const room: RoomDoc = await createRoom(uuid, n, m);
     return redirect_url;
   } catch (err) {
     console.log(`error in returnRedirectUrl:${err}`);

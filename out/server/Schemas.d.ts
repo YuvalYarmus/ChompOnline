@@ -6,11 +6,13 @@ export interface UserDoc extends mongoose.Document {
 }
 declare type boolState = boolean[][];
 export interface RoomDoc extends mongoose.Document {
-    population: number;
+    population: Number;
     uuid: string;
     users: [UserDoc];
     gameState: boolState;
-    currTurn: number;
+    currTurn: Number;
+    n: Number;
+    m: Number;
 }
 export declare const Room: mongoose.Model<RoomDoc, {}>;
 export declare const User: mongoose.Model<UserDoc, {}>;

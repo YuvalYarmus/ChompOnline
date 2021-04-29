@@ -133,6 +133,7 @@ if (getURLParam("full_name") != null) {
         game.drawShapes();
     });
     document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
+        socket.emit(`restartGame`, room_uuid);
         console.log(`\nrestarting game\n`);
         game = new Game(n, m);
         document.getElementById("Holder2").setAttribute("x-data", "{ open: false }");
