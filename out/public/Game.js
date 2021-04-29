@@ -210,9 +210,9 @@ export default class Game {
         shapes = this.fitShapesToCanvas(this.canvas, this.globalGameState);
         this.drawShapes(shapes);
     }
-    updateShapesDrawStateByArray() {
+    updateShapesDrawStateByArray(game_state = this.globalGameState.array) {
         for (const circle of this.globalGameState.shapes) {
-            circle.shouldDraw = this.globalGameState.array[circle.i][circle.j];
+            circle.shouldDraw = game_state[circle.i][circle.j];
         }
     }
     drawShapesByGameState(currGameState) {

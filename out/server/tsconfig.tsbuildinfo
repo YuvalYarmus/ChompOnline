@@ -382,8 +382,8 @@
         "affectsGlobalScope": false
       },
       "../../src/server/schemas.ts": {
-        "version": "1bf5b9bb74f519dc08eea171e93619bc439cd666c622cd742080de447bb3c1a7",
-        "signature": "003d0f08daa74b7fd7b6883c95708e8a83657a931c9e7b9ff137bb1d44a2c03a",
+        "version": "19b88e2197b728be8f8f3f9b13d37f97398425e037267d13ff4569b139eb17a5",
+        "signature": "15c6231be3b912961e099c9eac00fe35575d6e15552b6d32b3372363d75b76da",
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/range-parser/index.d.ts": {
@@ -432,7 +432,7 @@
         "affectsGlobalScope": false
       },
       "../../src/server/server.ts": {
-        "version": "fdf18aafa200da35d7255067b887ec0e7d5ee62860def6da2ae2c23e5e8d9f05",
+        "version": "82a3d29ac062230ab67fe4226d3599332e29d97b7a1d193709f58203dc50d07f",
         "signature": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
         "affectsGlobalScope": false
       }

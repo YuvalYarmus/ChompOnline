@@ -38,3 +38,37 @@ NOW ON : 2. Add a game state string to the room type
 restart the game?
 
 4. Make sure only the first 2 who enter can play, the rest may only watch and chat
+
+
+TO DO LIST:
+
+-Done 1. change the room schema to include the game state and turns
+
+-Done 2. change the code in the server so that it updates turns and game state on each move made
+
+-Done 3. change the code in the server so that when someone makes an illegal it will emit 
+a correction with the game state from the database
+
+-Done 4. change the code in the server so that it properly checks the whos turn is it
+
+5. Take care of restarting the game
+
+6. start working on the bot!!!!!!!!!!!!!!
+
+
+
+
+//this method for add data to subdocument
+BlogPost.findById(req.params.postId, function (err, post) {
+    var subDoc = post.comments.id(req.params.commentId);
+    subDoc = req.body;
+    post.save(function (err) {
+        if (err) return res.status(500).send(err);
+        res.send(post);
+    });
+});
+
+// alternative second method you can use this
+BlogPost.findOneAndUpdate({_id: req.params.postId}, {$push:{ subDoc: req.body }}, (err, doc) => {
+  	// do something here
+});

@@ -54,7 +54,7 @@ export default class Game {
      * @param currGameState
      */
     createShapesByArray(currGameState: boolState): void;
-    updateShapesDrawStateByArray(): void;
+    updateShapesDrawStateByArray(game_state?: boolState): void;
     drawShapesByGameState(currGameState: GameState): void;
     drawShapes(shapes?: Shape[]): void;
     updateGameState(currGameState: boolState, circle: Shape): boolState;

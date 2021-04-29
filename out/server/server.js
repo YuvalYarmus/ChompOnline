@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
+// declare var Qs: any;
+var Qs = require('qs');
 const path = require("path");
 const http = require("http");
 const socketio = require("socket.io");
@@ -70,7 +72,9 @@ function addUserToRoom(socket_id, username, room) {
                         reject(`no such room found`);
                     else {
                         room.users.push(new_user);
-                        room.population += 1;
+                        let newPopulation = room.population.valueOf();
+                        newPopulation += 1;
+                        room.population = newPopulation;
                         try {
                             const result = yield room.save();
                             if (log_get)
@@ -104,12 +108,16 @@ function addUserToUsers(socket_id, username, room) {
         }));
     });
 }
-function createRoom(uuid) {
+function createRoom(uuid, n1, m1) {
     return __awaiter(this, void 0, void 0, function* () {
         const room = new Schemas_1.Room({
             population: 0,
             uuid: uuid,
             users: [],
+            gameState: createGameState(n1, m1),
+            currTurn: 0,
+            n: n1,
+            m: m1
         });
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -122,6 +130,39 @@ function createRoom(uuid) {
                 reject(`got an error in saving a room: ${err}`);
             }
         }));
+    });
+}
+function updateMoveInRoom(uuidRoom, gameState, turns = -1) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.Room.where({ uuid: uuidRoom });
+            query.findOne(function (err, room) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (room === null)
+                        reject(`no such room found`);
+                    else {
+                        if (turns === -1) {
+                            let newTurn = room.currTurn.valueOf();
+                            newTurn += 1;
+                            room.currTurn = newTurn;
+                        }
+                        else {
+                            room.currTurn = turns;
+                        }
+                        room.gameState = gameState;
+                        try {
+                            const result = yield room.save();
+                            resolve(result);
+                        }
+                        catch (e) {
+                            reject(`\nerror in saving a room when trying to update a move: ${e}\n`);
+                        }
+                    }
+                });
+            });
+        });
     });
 }
 function removeRoomUser(socket_id) {
@@ -150,7 +191,9 @@ function removeRoomUser(socket_id) {
                                 }
                                 if (index !== -1) {
                                     const removed = room.users.splice(index, 1);
-                                    room.population -= 1;
+                                    let newPopulation = room.population.valueOf();
+                                    newPopulation -= 1;
+                                    room.population = newPopulation;
                                     console.log(`the user which was removed: ${removed}`);
                                     try {
                                         yield room.save();
@@ -184,6 +227,46 @@ function getRoomUsers(uuidRoom) {
                     else {
                         var usersList = room.users;
                         resolve(usersList);
+                    }
+                });
+            });
+        });
+    });
+}
+function getRoomGameStateAndTurns(uuidRoom) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.Room.where({ uuid: uuidRoom });
+            query.findOne(function (err, room) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (room === null)
+                        reject(`no such room found`);
+                    else {
+                        const gameState = room.gameState;
+                        const turn = room.currTurn;
+                        resolve([gameState, turn]);
+                    }
+                });
+            });
+        });
+    });
+}
+function getRoomBoardSize(uuidRoom) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const query = Schemas_1.Room.where({ uuid: uuidRoom });
+            query.findOne(function (err, room) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err)
+                        reject(`got an error in querying ${err}`);
+                    else if (room === null)
+                        reject(`no such room found`);
+                    else {
+                        const n = room.n.valueOf();
+                        const m = room.m.valueOf();
+                        resolve([n, m]);
                     }
                 });
             });
@@ -252,6 +335,18 @@ function handleEmptyRoom(uuidRoom) {
         });
     });
 }
+function createGameState(n, m) {
+    let arr = [];
+    if (n != null && m != null) {
+        for (let i = 0; i < n; i++) {
+            arr.push([]);
+            for (let j = 0; j < m; j++) {
+                arr[i].push(true);
+            }
+        }
+    }
+    return arr;
+}
 // socket io handles
 io.on(`connection`, (WebSocket) => {
     // console.log("new web socket connection");
@@ -283,6 +378,37 @@ io.on(`connection`, (WebSocket) => {
         // query returns a list so the result will be [user]. to grab the name use => currentUser[0].name
         io.to(currentUser[0].current_room.toString()).emit(`ChatMessage`, new messages_1.formatedMessage(currentUser[0].name, msg));
     }));
+    WebSocket.on(`restartGame`, (uuidRoom) => __awaiter(void 0, void 0, void 0, function* () {
+        const res = yield getRoomBoardSize(uuidRoom);
+        const n = res[0], m = res[1];
+        const resetBoard = createGameState(n, m);
+        yield updateMoveInRoom(uuidRoom, resetBoard);
+        io.to(uuidRoom).emit(`passMove`, resetBoard);
+    }));
+    WebSocket.on(`makeMove`, (obj) => __awaiter(void 0, void 0, void 0, function* () {
+        const users = yield getRoomUsers(obj.room_uuid);
+        const res = yield getRoomGameStateAndTurns(obj.room_uuid);
+        const gameState = res[0], turns = res[1];
+        let isFirst2 = false;
+        for (let i = 0; i < 2 && i < users.length; i++) {
+            if (users[i].user_id === WebSocket.id) {
+                // console.log(`Game turns passed is: ${turns}\nGameState is ${gameState}\n`);
+                if ((turns.valueOf() % 2 === 0 && i === 1) || (turns.valueOf() % 2 === 1 && i === 0)) {
+                    WebSocket.broadcast.to(obj.room_uuid).emit(`passMove`, obj.gameState);
+                    const room = yield updateMoveInRoom(obj.room_uuid, obj.gameState);
+                }
+                else {
+                    WebSocket.emit(`message`, new messages_1.formatedMessage(bot_name, "Please wait for your turn"));
+                    WebSocket.emit(`fixBoard`, gameState);
+                }
+                isFirst2 = true;
+            }
+        }
+        if (!isFirst2) {
+            WebSocket.emit(`message`, new messages_1.formatedMessage(bot_name, "You are not allowed to make moves as you are not one of the first 2 players who entered the room"));
+            WebSocket.emit(`fixBoard`, gameState);
+        }
+    }));
 });
 // console.log("path is " + path.join(__dirname, "../../", "html"));
 // console.log("about to handle Requests");
@@ -297,7 +423,7 @@ app.get("*/404", function (req, res, next) {
     res.sendFile("404.html", { root: path.join(__dirname, "../../", "html") });
     // next();
 });
-app.get(["/", "/index", "/index.html", "/public/index.html", "./index.html"], (req, res) => {
+app.get(["/", "/index", "/index.html", "/public/index.html", "./index.html", "/html/index.html"], (req, res) => {
     if (log_get === true)
         console.log("initial get any"); // @ts-ignore
     res.sendFile(path.join(__dirname, "../../html", "index.html"));
@@ -439,8 +565,15 @@ app.get(["/multiplayer", "/multiplayer.html", "./multiplayer", "/html/multiplaye
 }));
 function returnRedirectUrl(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        // console.log(`in returnRedirectUrl`);
         const params = req.originalUrl.toString().split("?");
+        // console.log(`\nparams is: ${params}`);
         const paramString = "?" + params[params.length - 1];
+        // console.log(`\nparamString is: ${paramString}`);
+        const { full_name, n, m } = Qs.parse(paramString, {
+            ignoreQueryPrefix: true,
+        });
+        // console.log(`param string is: ${paramString}\nqs params are: name: ${full_name}, ${n}, ${m}`);
         const uuid = uuidV4();
         const redirect_url = `${req.protocol}://${req.get("host")}` +
             req.path +
@@ -449,7 +582,7 @@ function returnRedirectUrl(req, res) {
         if (log_get === true)
             console.log(`redirect_url:${redirect_url}`);
         try {
-            const room = yield createRoom(uuid);
+            const room = yield createRoom(uuid, n, m);
             return redirect_url;
         }
         catch (err) {

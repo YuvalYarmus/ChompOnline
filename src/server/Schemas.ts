@@ -30,11 +30,15 @@ const userListSchema = new Schema({
     }
 });
 
+type boolState = boolean[][];
 export interface RoomDoc extends mongoose.Document {
-    population: number;
+    population: Number;
     uuid: string;
-    gameState: string;
     users: [UserDoc];
+    gameState : boolState;
+    currTurn : Number;
+    n : Number;
+    m : Number;
 }
 
 const roomSchema = new Schema({
@@ -46,14 +50,28 @@ const roomSchema = new Schema({
         type: String,
         require: true
     },
-    gameState : {
-        type: String,
-        require: true
-    },
     users: {
         type: [userSchema], // or Array
         required: false,
         default: []
+    },
+    gameState: {
+        type: [[]],
+        required: true,
+        default: [[]]
+    },
+    currTurn: {
+        type : Number,
+        required: true,
+        default : 0
+    },
+    n : {
+        type : Number,
+        required : false
+    },
+    m : {
+        type : Number,
+        required : false
     }
 }, { timestamps: true });
 
