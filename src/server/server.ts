@@ -340,7 +340,7 @@ io.on(`connection`, (WebSocket: any) => {
     if (currentUser2 != null) name = currentUser2.name;
     if (currentUser2 != null) handleEmptyRoom(currentUser2.current_room);
     io.to(currentUser2.current_room).emit(`outputUsers`, await getRoomUsers(currentUser2.current_room));
-    io.emit(
+    io.to(currentUser2.current_room).emit(
       `message`,
       new formatedMessage(bot_name, `${name} has left the room`)
     );
