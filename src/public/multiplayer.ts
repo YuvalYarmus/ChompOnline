@@ -143,6 +143,7 @@ if (getURLParam("full_name") != null) {
     game.drawShapes();
   });
   socket.on(`fixBoard`, (gameState : boolState) => {
+    game.globalGameState.array =  gameState;
     game.updateShapesDrawStateByArray(gameState);
     game.drawShapes();
   });
