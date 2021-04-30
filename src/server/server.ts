@@ -406,6 +406,14 @@ app.get(
     // next();
   }
 );
+
+app.get(
+  ["*/css/404.css"],
+  (req: express.Request, res: express.Response) => {
+    res.sendFile(path.join(__dirname, "../../css", "404.css"));
+  }
+);
+
 app.get(
   ["/", "/index", "/index.html", "/public/index.html", "./index.html", "/html/index.html"],
   (req: express.Request, res: express.Response) => {
