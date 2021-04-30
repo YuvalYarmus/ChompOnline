@@ -125,6 +125,7 @@ if (getURLParam("full_name") != null) {
         socket.emit("makeMove", { gameState, turns, room_uuid });
     });
     socket.on(`passMove`, (gameState) => {
+        game.globalGameState.array = gameState;
         game.updateShapesDrawStateByArray(gameState);
         game.drawShapes();
     });

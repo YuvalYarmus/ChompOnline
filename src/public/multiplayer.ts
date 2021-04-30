@@ -139,6 +139,7 @@ if (getURLParam("full_name") != null) {
   });
   type boolState = boolean[][];
   socket.on(`passMove`, (gameState : boolState) => {
+    game.globalGameState.array =  gameState;
     game.updateShapesDrawStateByArray(gameState);
     game.drawShapes();
   });
