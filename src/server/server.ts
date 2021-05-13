@@ -407,6 +407,13 @@ app.get(
   }
 );
 
+app.get(["./chat.mp3", "/chat.mp3"], (req: express.Request, res: express.Response) => {
+  res.sendFile(path.join(__dirname, "../../", "chat.mp3"));
+});
+app.get(["/gameTurn.mp3","/gameTurn.mp3"], (req: express.Request, res: express.Response) => {
+  res.sendFile(path.join(__dirname, "../../", "gameTurn.mp3"));
+});
+
 app.get(
   ["*/css/404.css"],
   (req: express.Request, res: express.Response) => {

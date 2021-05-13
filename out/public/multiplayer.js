@@ -10,6 +10,19 @@ const chatMessages = document.querySelector(".chat-messages");
 const roomName = document.getElementById("room-name");
 const userList = document.getElementById("users");
 const canvas = document.getElementById("canvas");
+const chatAudio = document.createElement(`audio`);
+document.getElementById("soundControl").innerHTML = `
+<label class="switch">
+<input id="soundSett" type="checkbox" checked>
+<span class="slider"></span>
+</label>`;
+chatAudio.src = "../../chat.mp3";
+const gameAudio = document.createElement(`audio`);
+gameAudio.src = "../../gameTurn.mp3";
+var soundOn = true;
+document.getElementById("soundSett").addEventListener(`change`, () => {
+    soundOn = !soundOn;
+});
 socket.on(`message`, (message) => {
     outputMessage(message);
     // Scroll down
@@ -52,6 +65,8 @@ function outputMessage(message) {
     para.innerText = message.msg.text;
     div.appendChild(para);
     document.querySelector(".chat-messages").appendChild(div);
+    if (soundOn)
+        chatAudio.play();
 }
 // Add room name to DOM
 function outputRoomName(room) {
@@ -128,11 +143,15 @@ if (getURLParam("full_name") != null) {
         game.globalGameState.array = gameState;
         game.updateShapesDrawStateByArray(gameState);
         game.drawShapes();
+        if (soundOn)
+            gameAudio.play();
     });
     socket.on(`fixBoard`, (gameState) => {
         game.globalGameState.array = gameState;
         game.updateShapesDrawStateByArray(gameState);
         game.drawShapes();
+        if (soundOn)
+            gameAudio.play();
     });
     document.getElementById(`playAgainBtn`)?.addEventListener("click", () => {
         socket.emit(`restartGame`, room_uuid);

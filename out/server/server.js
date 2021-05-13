@@ -371,7 +371,7 @@ io.on(`connection`, (WebSocket) => {
         if (currentUser2 != null)
             handleEmptyRoom(currentUser2.current_room);
         io.to(currentUser2.current_room).emit(`outputUsers`, yield getRoomUsers(currentUser2.current_room));
-        io.emit(`message`, new messages_1.formatedMessage(bot_name, `${name} has left the room`));
+        io.to(currentUser2.current_room).emit(`message`, new messages_1.formatedMessage(bot_name, `${name} has left the room`));
     }));
     WebSocket.on(`ChatMessage`, (msg) => __awaiter(void 0, void 0, void 0, function* () {
         const currentUser = yield getCurrentUserFromUsers(WebSocket.id);
@@ -422,6 +422,12 @@ app.get("*/404", function (req, res, next) {
     res.status(404);
     res.sendFile("404.html", { root: path.join(__dirname, "../../", "html") });
     // next();
+});
+app.get(["./chat.mp3", "/chat.mp3"], (req, res) => {
+    res.sendFile(path.join(__dirname, "../../", "chat.mp3"));
+});
+app.get(["/gameTurn.mp3", "/gameTurn.mp3"], (req, res) => {
+    res.sendFile(path.join(__dirname, "../../", "gameTurn.mp3"));
 });
 app.get(["*/css/404.css"], (req, res) => {
     res.sendFile(path.join(__dirname, "../../css", "404.css"));
