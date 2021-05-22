@@ -1,4 +1,4 @@
-import Game from "./Game.js";
+import { Game } from "./Game.js";
 var gotName = false;
 // var ip = '127.0.0.1:3000';
 // var socket = io.connect(ip);

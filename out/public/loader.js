@@ -44,6 +44,7 @@ function redirect() {
             page = "../../html/multiplayer.html";
         }
         else if (pages.toString().toLowerCase() === "c") {
+            page = "../../html/bot.html";
         }
         else {
             window.location.replace(window.location.href + "/404");

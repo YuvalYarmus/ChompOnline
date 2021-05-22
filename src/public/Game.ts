@@ -6,8 +6,16 @@ interface point {
   rectY: number;
   eveY: number;
 }
-
-class Shape {
+export interface Shape {
+  id: string;
+  x: number;
+  y: number;
+  radius: number;
+  i: number;
+  j: number;
+  shouldDraw: boolean;
+}
+export class Shape implements Shape {
   id: string;
   x: number;
   y: number;
@@ -34,13 +42,13 @@ class Shape {
   }
 
   toString() {
-    return `draw is ${this.shouldDraw}, i is ${this.i}, j is ${this.j}`;
+    // return `draw is ${this.shouldDraw}, i is ${this.i}, j is ${this.j}`;
+    return `\n[${this.id}]-${this.shouldDraw}\n`;
   }
 }
 
 // mimicking a boolean 2d array which will represent the game state
 type boolState = boolean[][];
-
 interface GameState {
   array: boolState;
   shapes: Shape[];
@@ -51,7 +59,7 @@ class GameStateObject implements GameState {
   array: boolState = [];
   shapes: Shape[] = [];
 }
-export default class Game {
+export class Game {
   // usability guidelines for the game_state array:
   // on creation, all the inner arrays must be set to the same length
   // deleting a shape can be executed by changing its position to false and than redrawing
@@ -95,22 +103,12 @@ export default class Game {
    */
   resizeFunc() {
     this.canvas.height = Math.round(window.innerHeight * 0.9);
-    console.log(
-      `cavas height is ${this.canvas.height} and mod2 is ${
-        this.canvas.height % 2
-      }`
-    );
+    // console.log(`cavas height is ${this.canvas.height} and mod2 is ${this.canvas.height % 2}`);
     this.canvas.height -= this.canvas.height % 2;
     this.canvas.width = Math.round(window.innerWidth * 0.9);
-    console.log(
-      `cavas height is ${this.canvas.width} and mod2 is ${
-        this.canvas.width % 2
-      }`
-    );
+    // console.log(`cavas height is ${this.canvas.width} and mod2 is ${this.canvas.width % 2}`);
     this.canvas.width -= this.canvas.width % 2;
-    console.log(
-      `resize triggered width:${this.canvas.width},height: ${this.canvas.height}`
-    );
+    // console.log(`resize triggered width:${this.canvas.width},height: ${this.canvas.height}`);
     this.fitShapesToCanvas(this.canvas, this.globalGameState);
     this.drawShapes(this.globalGameState.shapes);
   }
@@ -121,8 +119,10 @@ export default class Game {
    */
   clickFunc(e: MouseEvent) {
     const CANVASpos = this.getMousePos(e);
+    let i = -1 , j = -1;
     for (const circle of this.globalGameState.shapes) {
       if (this.isIntersect(CANVASpos, circle) === true) {
+        i = circle.i; j = circle.j;
         if (
           circle.i === this.globalGameState.array.length - 1 &&
           circle.j === 0
@@ -158,6 +158,7 @@ export default class Game {
         }
       }
     }
+    return [i, j];
   }
 
   /**
@@ -177,6 +178,7 @@ export default class Game {
     let arr: boolean[][] = [];
     if (n != null && m != null) {
       for (let i = 0; i < n; i++) {
+        // arr.unshift([]);
         arr.push([]);
         this.globalGameState.array.push([]);
         for (let j = 0; j < m; j++) {
@@ -205,6 +207,7 @@ export default class Game {
     else {
       let arr: boolState = [];
       for (let i = 0; i < n; i++) {
+        // arr.unshift([]);
         arr.push([]);
         for (let j = 0; j < m; j++) {
           arr[i].push(true);
@@ -337,6 +340,10 @@ export default class Game {
       }
     }
     return currGameState;
+  }
+
+  replaceGameStateArray(gameState : boolState | boolean[][]) {
+    this.globalGameState.array = gameState;
   }
 
   isIntersect(point: point, circle: Shape) {

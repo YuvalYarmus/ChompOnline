@@ -6,7 +6,16 @@ interface point {
     rectY: number;
     eveY: number;
 }
-declare class Shape {
+export interface Shape {
+    id: string;
+    x: number;
+    y: number;
+    radius: number;
+    i: number;
+    j: number;
+    shouldDraw: boolean;
+}
+export declare class Shape implements Shape {
     id: string;
     x: number;
     y: number;
@@ -23,7 +32,7 @@ interface GameState {
     shapes: Shape[];
     [key: string]: any;
 }
-export default class Game {
+export declare class Game {
     globalGameState: GameState;
     color: string;
     turns: number;
@@ -38,7 +47,7 @@ export default class Game {
      * responds to user moves
      * @param e - the mouse events the represent user moves
      */
-    clickFunc(e: MouseEvent): void;
+    clickFunc(e: MouseEvent): number[];
     /**
      * prompting the user to set the board size
      */
@@ -58,6 +67,7 @@ export default class Game {
     drawShapesByGameState(currGameState: GameState): void;
     drawShapes(shapes?: Shape[]): void;
     updateGameState(currGameState: boolState, circle: Shape): boolState;
+    replaceGameStateArray(gameState: boolState | boolean[][]): void;
     isIntersect(point: point, circle: Shape): boolean;
     getMousePos(e: MouseEvent): {
         x: number;

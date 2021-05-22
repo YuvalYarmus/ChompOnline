@@ -301,6 +301,6 @@
 //     };
 //   }
 // }
-import Game from "./Game";
+import { Game } from "./Game";
 console.clear();
 var game = new Game();

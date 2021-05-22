@@ -429,6 +429,15 @@ app.get(["./chat.mp3", "/chat.mp3"], (req, res) => {
 app.get(["/gameTurn.mp3", "/gameTurn.mp3"], (req, res) => {
     res.sendFile(path.join(__dirname, "../../", "gameTurn.mp3"));
 });
+app.get(["/html/bot.html"], (req, res) => {
+    res.sendFile(path.join(__dirname, "../../html", "bot.html"));
+});
+app.get(["/out/public/bot.js"], (req, res) => {
+    res.sendFile(path.join(__dirname, "../../out/public", "bot.js"));
+});
+app.get(["/out/public/bot2.js"], (req, res) => {
+    res.sendFile(path.join(__dirname, "../../out/public", "bot2.js"));
+});
 app.get(["*/css/404.css"], (req, res) => {
     res.sendFile(path.join(__dirname, "../../css", "404.css"));
 });
