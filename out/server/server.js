@@ -429,7 +429,7 @@ app.get(["./chat.mp3", "/chat.mp3"], (req, res) => {
 app.get(["/gameTurn.mp3", "/gameTurn.mp3"], (req, res) => {
     res.sendFile(path.join(__dirname, "../../", "gameTurn.mp3"));
 });
-app.get(["/html/bot.html"], (req, res) => {
+app.get(["/html/bot.html", "/bot.html"], (req, res) => {
     res.sendFile(path.join(__dirname, "../../html", "bot.html"));
 });
 app.get(["/out/public/bot.js"], (req, res) => {
@@ -563,7 +563,7 @@ app.get(["/solo", "/solo.html", "/public/solo.html", "./solo"], (req, res) => {
         root: path.join(__dirname, "../../", "html"),
     });
 });
-app.get(["/loadPage.html*", "/loadPage.html", "/public/loadPage.html"], (req, res) => {
+app.get(["/loadPage.html*", "/loadPage.html", "/public/loadPage.html", "/html/loadPage.html*"], (req, res) => {
     if (log_get === true)
         console.log("moving to the loading page");
     res.sendFile("loadPage.html", {

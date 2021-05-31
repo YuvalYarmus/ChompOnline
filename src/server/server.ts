@@ -413,7 +413,7 @@ app.get(["./chat.mp3", "/chat.mp3"], (req: express.Request, res: express.Respons
 app.get(["/gameTurn.mp3","/gameTurn.mp3"], (req: express.Request, res: express.Response) => {
   res.sendFile(path.join(__dirname, "../../", "gameTurn.mp3"));
 });
-app.get(["/html/bot.html"], (req: express.Request, res: express.Response) => {
+app.get(["/html/bot.html", "/bot.html"], (req: express.Request, res: express.Response) => {
   res.sendFile(path.join(__dirname, "../../html", "bot.html"));
 });
 app.get(["/out/public/bot.js"], (req: express.Request, res: express.Response) => {
@@ -587,7 +587,7 @@ app.get(
 );
 
 app.get(
-  ["/loadPage.html*", "/loadPage.html", "/public/loadPage.html"],
+  ["/loadPage.html*", "/loadPage.html", "/public/loadPage.html", "/html/loadPage.html*"],
   (req: express.Request, res: express.Response) => {
     if (log_get === true) console.log("moving to the loading page");
     res.sendFile("loadPage.html", {
