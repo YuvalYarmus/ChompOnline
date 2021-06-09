@@ -54,13 +54,13 @@ export class Game {
      * redrawing the board on every page resize
      */
     resizeFunc() {
-        this.canvas.height = Math.round(window.innerHeight * 0.9);
-        // console.log(`cavas height is ${this.canvas.height} and mod2 is ${this.canvas.height % 2}`);
-        this.canvas.height -= this.canvas.height % 2;
-        this.canvas.width = Math.round(window.innerWidth * 0.9);
-        // console.log(`cavas height is ${this.canvas.width} and mod2 is ${this.canvas.width % 2}`);
-        this.canvas.width -= this.canvas.width % 2;
-        // console.log(`resize triggered width:${this.canvas.width},height: ${this.canvas.height}`);
+        // this.canvas.height = Math.round(window.innerHeight * 0.9);
+        // // console.log(`cavas height is ${this.canvas.height} and mod2 is ${this.canvas.height % 2}`);
+        // this.canvas.height -= this.canvas.height % 2;
+        // this.canvas.width = Math.round(window.innerWidth * 0.9);
+        // // console.log(`cavas height is ${this.canvas.width} and mod2 is ${this.canvas.width % 2}`);
+        // this.canvas.width -= this.canvas.width % 2;
+        // // console.log(`resize triggered width:${this.canvas.width},height: ${this.canvas.height}`);
         this.fitShapesToCanvas(this.canvas, this.globalGameState);
         this.drawShapes(this.globalGameState.shapes);
     }
